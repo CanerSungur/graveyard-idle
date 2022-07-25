@@ -11,8 +11,8 @@ namespace ZestGames
     }
 
     public static class PlayerEvents 
-    { 
-        
+    {
+        public static Action OnMove, OnIdle, OnTakeACoffin, OnDropCoffin;
     }
 
     public static class UiEvents
@@ -29,5 +29,10 @@ namespace ZestGames
     public static class InputEvents
     {
         public static Action OnTapHappened, OnTouchStarted, OnTouchStopped;
+    }
+
+    public static class CoffinAreaEvents
+    {
+        public static Action OnStackedCoffin, OnUnStackedCoffin;
     }
 }
