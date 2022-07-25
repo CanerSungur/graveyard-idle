@@ -6,6 +6,7 @@ namespace GraveyardIdle
     public class PlayerAnimationController : MonoBehaviour
     {
         private Animator _animator;
+        private PlayerHandsIKController _handsIKController;
 
         #region ANIMATION PARAMETERS
         private readonly int _runID = Animator.StringToHash("Run");
@@ -13,9 +14,15 @@ namespace GraveyardIdle
         private readonly int _carryingCoffinID = Animator.StringToHash("CarryingCoffin");
         #endregion
 
+        #region GETTERS
+        public Animator Animator => _animator;
+        #endregion
+
         public void Init(Player player)
         {
             _animator = GetComponentInChildren<Animator>();
+            _handsIKController = GetComponentInChildren<PlayerHandsIKController>();
+            _handsIKController.Init(this);
             StopCarryingCoffin();
 
             PlayerEvents.OnIdle += Idle;
@@ -50,5 +57,12 @@ namespace GraveyardIdle
             _animator.SetFloat(_runSpeedID, 1f);
             _animator.SetBool(_carryingCoffinID, false);
         }
+
+        #region PUBLICS
+        public void SetCoffinIK(Coffin coffin)
+        {
+            _handsIKController.SetIKHandObjects(coffin.LeftHandObjectIK, coffin.RightHandObjectIK);
+        }
+        #endregion
     }
 }

@@ -22,6 +22,7 @@ namespace GraveyardIdle
         private void GiveACoffin()
         {
             Coffin coffin = CoffinAreaStackHandler.CoffinsInArea[CoffinAreaStackHandler.CoffinsInArea.Count - 1];
+            PlayerEvents.OnSetCarryingCoffin?.Invoke(coffin);
             coffin.GoToPlayer(_coffinArea.Player.CarryTransform);
             CoffinAreaStackHandler.RemoveCoffin(coffin);
         }

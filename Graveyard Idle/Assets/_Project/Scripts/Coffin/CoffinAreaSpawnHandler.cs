@@ -29,6 +29,7 @@ namespace GraveyardIdle
                 if (_coffinArea.CanSpawn)
                 {
                     Coffin coffin = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.Coffin, spawnTransform.position, Quaternion.Euler(0f, 90f, 0f)).GetComponent<Coffin>();
+                    coffin.Init(this);
                     coffin.GetStacked(_coffinArea.StackHandler.TargetStackPosition, _coffinArea.StackHandler.StackContainer);
                     CoffinAreaStackHandler.AddCoffin(coffin);
                 }

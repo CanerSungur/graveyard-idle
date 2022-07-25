@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 using ZestGames;
 
@@ -8,6 +9,14 @@ namespace GraveyardIdle
     {
         [Header("-- SETUP --")]
         [SerializeField] private Transform carryTransform;
+
+        #region CARRY TRANSFORM RELATED
+        private readonly Vector3 _carryTransformDefaultPosition = new Vector3(0.03f, 0.617f, -1.41f);
+        private readonly Vector3 _carryTransformCloserPosition = new Vector3(0.03f, 0.617f, -1.21f);
+        private readonly float _carryTransformPositionChangeSpeed = 2f;
+        private Sequence _changeCarryTransformSequence;
+        private Guid _changeCarryTransformSequenceID;
+        #endregion
 
         #region COMPONENTS
         private Collider _collider;
@@ -29,12 +38,17 @@ namespace GraveyardIdle
 
         #region PROPERTIES
         public bool IsCarryingCoffin { get; private set; }
+        public Coffin CoffinCarryingNow { get; private set; }
+        #endregion
+
+        #region GETTERS
         public Transform CarryTransform => carryTransform;
         #endregion
 
         private void Start()
         {
             IsCarryingCoffin = false;
+            CoffinCarryingNow = null;
 
             InputHandler.Init(this);
             Movement.Init(this);
@@ -42,16 +56,35 @@ namespace GraveyardIdle
             CollisionHandler.Init(this);
             StateController.Init(this);
 
+            PlayerEvents.OnMove += TakeCoffinFurther;
+            PlayerEvents.OnIdle += TakeCoffinCloser;
             PlayerEvents.OnTakeACoffin += TakeACoffin;
             PlayerEvents.OnDropCoffin += DropCoffin;
+            PlayerEvents.OnSetCarryingCoffin += SetCarryingCoffin;
         }
 
         private void OnDisable()
         {
+            PlayerEvents.OnMove -= TakeCoffinFurther;
+            PlayerEvents.OnIdle -= TakeCoffinCloser;
             PlayerEvents.OnTakeACoffin -= TakeACoffin;
             PlayerEvents.OnDropCoffin -= DropCoffin;
+            PlayerEvents.OnSetCarryingCoffin += SetCarryingCoffin;
         }
 
+        #region COFFIN RELATED FUNCTIONS
+        private void TakeCoffinFurther()
+        {
+            _changeCarryTransformSequence.Pause();
+            DeleteChangeCarryTransformSequence();
+            StartChangingCarryTransform(_carryTransformDefaultPosition);
+        }
+        private void TakeCoffinCloser()
+        {
+            _changeCarryTransformSequence.Pause();
+            DeleteChangeCarryTransformSequence();
+            StartChangingCarryTransform(_carryTransformCloserPosition);
+        }
         private void TakeACoffin()
         {
             IsCarryingCoffin = true;
@@ -59,6 +92,42 @@ namespace GraveyardIdle
         private void DropCoffin()
         {
             IsCarryingCoffin = false;
+            CoffinCarryingNow.GetDropped();
         }
+        private void SetCarryingCoffin(Coffin coffin)
+        {
+            CoffinCarryingNow = coffin;
+            AnimationController.SetCoffinIK(CoffinCarryingNow);
+        }
+
+        #region DOTWEEN FUNCTIONS
+        private void StartChangingCarryTransform(Vector3 position)
+        {
+            CreateChangeCarryTransformSequence(position);
+            _changeCarryTransformSequence.Play();
+        }
+        private void CreateChangeCarryTransformSequence(Vector3 position)
+        {
+            if (_changeCarryTransformSequence == null)
+            {
+                _changeCarryTransformSequence = DOTween.Sequence();
+                _changeCarryTransformSequenceID = Guid.NewGuid();
+                _changeCarryTransformSequence.id = _changeCarryTransformSequenceID;
+
+                _changeCarryTransformSequence.Append(DOVirtual.Vector3(carryTransform.localPosition, position, _carryTransformPositionChangeSpeed, r => {
+                    carryTransform.localPosition = r;
+                })).OnComplete(() => {
+                    DeleteChangeCarryTransformSequence();
+                });
+            }
+        }
+        private void DeleteChangeCarryTransformSequence() 
+        {
+            DOTween.Kill(_changeCarryTransformSequenceID);
+            _changeCarryTransformSequence = null;
+        }
+        #endregion
+
+        #endregion
     }
 }

@@ -1,3 +1,4 @@
+using GraveyardIdle;
 using System;
 
 namespace ZestGames
@@ -13,6 +14,7 @@ namespace ZestGames
     public static class PlayerEvents 
     {
         public static Action OnMove, OnIdle, OnTakeACoffin, OnDropCoffin;
+        public static Action<Coffin> OnSetCarryingCoffin;
     }
 
     public static class UiEvents
