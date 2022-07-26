@@ -9,6 +9,7 @@ namespace ZestGames
         [Header("-- CAMERA SETUP --")]
         [SerializeField] private CinemachineVirtualCamera gameStartCM;
         [SerializeField] private CinemachineVirtualCamera gameplayCM;
+        [SerializeField] private CinemachineVirtualCamera diggingCM;
         private CinemachineTransposer _gameplayCMTransposer;
 
         [Header("-- SHAKE SETUP --")]
@@ -28,16 +29,21 @@ namespace ZestGames
 
             gameStartCM.Priority = 2;
             gameplayCM.Priority = 1;
+            diggingCM.Priority = 0;
         }
 
         private void Start()
         {
+            PlayerEvents.OnEnteredDigZone += () => diggingCM.Priority = 5;
+            PlayerEvents.OnExitedDigZone += () => diggingCM.Priority = 0;
             GameEvents.OnGameStart += () => gameplayCM.Priority = 3;
             OnShakeCam += () => _shakeStarted = true;
         }
 
         private void OnDisable()
         {
+            PlayerEvents.OnEnteredDigZone -= () => diggingCM.Priority = 5;
+            PlayerEvents.OnExitedDigZone -= () => diggingCM.Priority = 0;
             GameEvents.OnGameStart -= () => gameplayCM.Priority = 3;
             OnShakeCam -= () => _shakeStarted = true;
         }

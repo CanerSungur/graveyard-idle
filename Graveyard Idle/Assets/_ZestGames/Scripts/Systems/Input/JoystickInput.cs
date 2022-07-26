@@ -5,6 +5,8 @@ namespace ZestGames
 {
     public class JoystickInput : MonoBehaviour
     {
+        private Player _player;
+
         [Header("-- INPUT SETUP --")]
         [SerializeField] private Joystick joystick;
 
@@ -17,6 +19,7 @@ namespace ZestGames
 
         public void Init(Player player)
         {
+            _player = player;
             GameEvents.OnGameStart += () => _delayedTime = Time.time + _delayRate;
         }
 

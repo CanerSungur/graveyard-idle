@@ -13,7 +13,7 @@ namespace GraveyardIdle
         #region CARRY TRANSFORM RELATED
         private readonly Vector3 _carryTransformDefaultPosition = new Vector3(0.03f, 0.617f, -1.41f);
         private readonly Vector3 _carryTransformCloserPosition = new Vector3(0.03f, 0.617f, -1.21f);
-        private readonly float _carryTransformPositionChangeSpeed = 2f;
+        private readonly float _carryTransformPositionChangeSpeed = 1f;
         private Sequence _changeCarryTransformSequence;
         private Guid _changeCarryTransformSequenceID;
         #endregion
@@ -34,10 +34,16 @@ namespace GraveyardIdle
         public PlayerCollision CollisionHandler => _collisionHandler == null ? _collisionHandler = GetComponent<PlayerCollision>() : _collisionHandler;
         private PlayerStateController _stateController;
         public PlayerStateController StateController => _stateController == null ? _stateController = GetComponent<PlayerStateController>() : _stateController;
+        private PlayerDigHandler  _digHandler;
+        public PlayerDigHandler DigHandler => _digHandler == null ? _digHandler = GetComponent<PlayerDigHandler>() : _digHandler;
+        private Shovel _shovel;
+        public Shovel Shovel => _shovel == null ? _shovel = GetComponentInChildren<Shovel>() : _shovel;
         #endregion
 
         #region PROPERTIES
         public bool IsCarryingCoffin { get; private set; }
+        public bool IsDigging { get; private set; }
+        public bool IsInDigZone { get; private set; }
         public Coffin CoffinCarryingNow { get; private set; }
         #endregion
 
@@ -47,7 +53,7 @@ namespace GraveyardIdle
 
         private void Start()
         {
-            IsCarryingCoffin = false;
+            IsCarryingCoffin = IsDigging = IsInDigZone = false;
             CoffinCarryingNow = null;
 
             InputHandler.Init(this);
@@ -55,12 +61,18 @@ namespace GraveyardIdle
             AnimationController.Init(this);
             CollisionHandler.Init(this);
             StateController.Init(this);
+            DigHandler.Init(this);
+            Shovel.Init(this);
 
             PlayerEvents.OnMove += TakeCoffinFurther;
             PlayerEvents.OnIdle += TakeCoffinCloser;
             PlayerEvents.OnTakeACoffin += TakeACoffin;
             PlayerEvents.OnDropCoffin += DropCoffin;
             PlayerEvents.OnSetCarryingCoffin += SetCarryingCoffin;
+            PlayerEvents.OnStartDigging += StartDigging;
+            PlayerEvents.OnStopDigging += StopDigging;
+            PlayerEvents.OnEnteredDigZone += EnteredDigZone;
+            PlayerEvents.OnExitedDigZone += ExitedDigZone;
         }
 
         private void OnDisable()
@@ -70,7 +82,16 @@ namespace GraveyardIdle
             PlayerEvents.OnTakeACoffin -= TakeACoffin;
             PlayerEvents.OnDropCoffin -= DropCoffin;
             PlayerEvents.OnSetCarryingCoffin += SetCarryingCoffin;
+            PlayerEvents.OnStartDigging -= StartDigging;
+            PlayerEvents.OnStopDigging -= StopDigging;
+            PlayerEvents.OnEnteredDigZone -= EnteredDigZone;
+            PlayerEvents.OnExitedDigZone -= ExitedDigZone;
         }
+
+        private void EnteredDigZone() => IsInDigZone = true;
+        private void ExitedDigZone() => IsInDigZone = false;
+        private void StartDigging() => IsDigging = true;
+        private void StopDigging() => IsDigging = false;
 
         #region COFFIN RELATED FUNCTIONS
         private void TakeCoffinFurther()

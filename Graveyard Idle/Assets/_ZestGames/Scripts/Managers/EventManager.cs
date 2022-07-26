@@ -13,8 +13,9 @@ namespace ZestGames
 
     public static class PlayerEvents 
     {
-        public static Action OnMove, OnIdle, OnTakeACoffin, OnDropCoffin;
+        public static Action OnMove, OnIdle, OnTakeACoffin, OnDropCoffin, OnStartDigging, OnStopDigging;
         public static Action<Coffin> OnSetCarryingCoffin;
+        public static Action OnEnteredDigZone, OnExitedDigZone;
     }
 
     public static class UiEvents
@@ -36,5 +37,10 @@ namespace ZestGames
     public static class CoffinAreaEvents
     {
         public static Action OnStackedCoffin, OnUnStackedCoffin;
+    }
+
+    public static class ShovelEvents
+    {
+        public static Action OnCanDig, OnCantDig;
     }
 }

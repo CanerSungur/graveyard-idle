@@ -52,6 +52,9 @@ namespace GraveyardIdle
                 {
                     PlayerEvents.OnMove?.Invoke();
                     _startedMoving = true;
+
+                    if (_player.IsInDigZone && _player.IsDigging)
+                        PlayerEvents.OnStopDigging?.Invoke();
                 }
             }
             else
@@ -60,6 +63,9 @@ namespace GraveyardIdle
                 {
                     PlayerEvents.OnIdle?.Invoke();
                     _startedMoving = false;
+
+                    if (_player.IsInDigZone && !_player.IsDigging)
+                        PlayerEvents.OnStartDigging?.Invoke();
                 }
             }
 

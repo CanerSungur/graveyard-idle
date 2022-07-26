@@ -7,11 +7,14 @@ namespace GraveyardIdle
     {
         private Animator _animator;
         private PlayerHandsIKController _handsIKController;
+        private PlayerAnimationEventHandler _animationEventHandler;
 
         #region ANIMATION PARAMETERS
-        private readonly int _runID = Animator.StringToHash("Run");
-        private readonly int _runSpeedID = Animator.StringToHash("RunSpeed");
+        private readonly int _runID = Animator.StringToHash("Move");
+        private readonly int _runSpeedID = Animator.StringToHash("MoveSpeed");
         private readonly int _carryingCoffinID = Animator.StringToHash("CarryingCoffin");
+        private readonly int _isInDiggingZoneID = Animator.StringToHash("InDiggingZone");
+        private readonly int _digSpeedID = Animator.StringToHash("DigSpeed");
         #endregion
 
         #region GETTERS
@@ -21,14 +24,19 @@ namespace GraveyardIdle
         public void Init(Player player)
         {
             _animator = GetComponentInChildren<Animator>();
+            _animationEventHandler = GetComponentInChildren<PlayerAnimationEventHandler>();
+            _animationEventHandler.Init(this);
             _handsIKController = GetComponentInChildren<PlayerHandsIKController>();
             _handsIKController.Init(this);
+            
             StopCarryingCoffin();
 
             PlayerEvents.OnIdle += Idle;
             PlayerEvents.OnMove += Run;
             PlayerEvents.OnTakeACoffin += StartCarryingCoffin;
             PlayerEvents.OnDropCoffin += StopCarryingCoffin;
+            PlayerEvents.OnEnteredDigZone += StartDigging;
+            PlayerEvents.OnExitedDigZone += StopDigging;
         }
 
         private void OnDisable()
@@ -37,6 +45,8 @@ namespace GraveyardIdle
             PlayerEvents.OnMove -= Run;
             PlayerEvents.OnTakeACoffin -= StartCarryingCoffin;
             PlayerEvents.OnDropCoffin -= StopCarryingCoffin;
+            PlayerEvents.OnEnteredDigZone -= StartDigging;
+            PlayerEvents.OnExitedDigZone -= StopDigging;
         }
 
         private void Run()
@@ -56,6 +66,14 @@ namespace GraveyardIdle
         {
             _animator.SetFloat(_runSpeedID, 1f);
             _animator.SetBool(_carryingCoffinID, false);
+        }
+        private void StartDigging()
+        {
+            _animator.SetBool(_isInDiggingZoneID, true);
+        }
+        private void StopDigging()
+        {
+            _animator.SetBool(_isInDiggingZoneID, false);
         }
 
         #region PUBLICS
