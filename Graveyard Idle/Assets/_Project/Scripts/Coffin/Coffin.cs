@@ -13,8 +13,8 @@ namespace GraveyardIdle
 
         #region STACK DATA
         private bool _stacked = false;
-        private readonly float _stackJumpHeight = 1.5f;
-        private readonly float _animationTime = 0.5f;
+        private readonly float _stackJumpHeight = 4f;
+        private readonly float _animationTime = 1.5f;
         #endregion
 
         #region COMPONENTS
@@ -41,7 +41,7 @@ namespace GraveyardIdle
         private Guid _jumpSequenceID;
         #endregion
 
-        public void Init(CoffinAreaSpawnHandler spawnHandler)
+        public void Init(Truck truck)
         {
             IsBeingCarried = false;
             Rigidbody.isKinematic = true;
@@ -54,7 +54,7 @@ namespace GraveyardIdle
         {
             transform.SetParent(parent);
 
-            StartJumpSequence(position, Vector3.zero);
+            StartJumpSequence(position, new Vector3(0f, 180f, 0f));
 
             _stacked = true;
 
@@ -65,7 +65,7 @@ namespace GraveyardIdle
             IsBeingCarried = true;
             transform.SetParent(parent);
 
-            StartJumpSequence(Vector3.zero, new Vector3(23f, 0f, 0f));
+            StartJumpSequence(Vector3.zero, new Vector3(14f, 0f, 0f));
 
             CoffinAreaEvents.OnUnStackedCoffin?.Invoke();
         }

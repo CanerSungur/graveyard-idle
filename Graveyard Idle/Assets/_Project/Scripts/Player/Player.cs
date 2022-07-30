@@ -11,8 +11,8 @@ namespace GraveyardIdle
         [SerializeField] private Transform carryTransform;
 
         #region CARRY TRANSFORM RELATED
-        private readonly Vector3 _carryTransformDefaultPosition = new Vector3(0.03f, 0.617f, -1.41f);
-        private readonly Vector3 _carryTransformCloserPosition = new Vector3(0.03f, 0.617f, -1.21f);
+        private readonly Vector3 _carryTransformDefaultPosition = new Vector3(0.03f, 0.617f, -1.54f);
+        private readonly Vector3 _carryTransformCloserPosition = new Vector3(0.03f, 0.617f, -1.41f);
         private readonly float _carryTransformPositionChangeSpeed = 1f;
         private Sequence _changeCarryTransformSequence;
         private Guid _changeCarryTransformSequenceID;

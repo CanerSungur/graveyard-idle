@@ -14,7 +14,7 @@ namespace GraveyardIdle
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out TakeCoffinArea takeCoffinArea))
+            if (other.TryGetComponent(out TakeCoffinArea takeCoffinArea) && !takeCoffinArea.PlayerIsInArea)
                 takeCoffinArea.StartOpening();
 
             if (other.TryGetComponent(out DigArea digArea) && !_player.IsCarryingCoffin)
@@ -22,15 +22,21 @@ namespace GraveyardIdle
 
             if (other.gameObject.layer == LayerMask.NameToLayer("CoffinDropArea") && _player.IsCarryingCoffin)
                 PlayerEvents.OnDropCoffin?.Invoke();
+
+            if (other.TryGetComponent(out InteractableGroundCanvas interactableGroundCanvas) && !interactableGroundCanvas.PlayerIsInArea)
+                interactableGroundCanvas.StartOpening();
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.TryGetComponent(out TakeCoffinArea takeCoffinArea))
+            if (other.TryGetComponent(out TakeCoffinArea takeCoffinArea) && takeCoffinArea.PlayerIsInArea)
                 takeCoffinArea.StopOpening();
 
             if (other.TryGetComponent(out DigArea digArea))
                 digArea.StopFilling();
+
+            if (other.TryGetComponent(out InteractableGroundCanvas interactableGroundCanvas) && interactableGroundCanvas.PlayerIsInArea)
+                interactableGroundCanvas.StopOpening();
         }
     }
 }

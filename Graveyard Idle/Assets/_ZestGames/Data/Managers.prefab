@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5491084403859615912}
   - component: {fileID: 5491084403859615927}
   - component: {fileID: 1124688366865923144}
+  - component: {fileID: 8235525942019915963}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -101,6 +102,7 @@ MonoBehaviour:
   hud: {fileID: 0}
   levelFail: {fileID: 0}
   levelSuccess: {fileID: 0}
+  settings: {fileID: 0}
   successScreenDelay: 1
   failScreenDelay: 1
 --- !u!114 &1124688366865923144
@@ -117,3 +119,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameStartCM: {fileID: 0}
   gameplayCM: {fileID: 0}
+  diggingCM: {fileID: 0}
+--- !u!114 &8235525942019915963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5491084403859615924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d579fd92981acb4fbb5913d539eddb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  truck: {fileID: 0}

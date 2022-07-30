@@ -1,13 +1,38 @@
 using UnityEngine;
 using ZestGames;
+using ZestCore.Utility;
 
 namespace GraveyardIdle
 {
     public class Grave : MonoBehaviour
     {
+        private SoilDeform _soil;
+        private bool _isDug = false;
+
+        private void OnEnable()
+        {
+            _isDug = false;
+            _soil = GetComponentInChildren<SoilDeform>();
+            Delayer.DoActionAfterDelay(this, 2f, () => _soil.Init(this));
+
+            GraveEvents.OnAGraveIsDug += GraveIsDug;
+        }
+
+        private void OnDisable()
+        {
+            GraveEvents.OnAGraveIsDug -= GraveIsDug;
+        }
+
+        private void GraveIsDug(Grave grave)
+        {
+            if (grave != this) return;
+            _isDug = true;
+            PlayerEvents.OnExitedDigZone?.Invoke();
+        }
+
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out Player player) && !player.IsInDigZone)
+            if (other.TryGetComponent(out Player player) && !player.IsInDigZone && !_isDug)
             {
                 PlayerEvents.OnEnteredDigZone?.Invoke();
             }

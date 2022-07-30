@@ -64,7 +64,7 @@ namespace GraveyardIdle
                     PlayerEvents.OnIdle?.Invoke();
                     _startedMoving = false;
 
-                    if (_player.IsInDigZone && !_player.IsDigging)
+                    if (_player.IsInDigZone && !_player.IsDigging && !_player.IsCarryingCoffin)
                         PlayerEvents.OnStartDigging?.Invoke();
                 }
             }

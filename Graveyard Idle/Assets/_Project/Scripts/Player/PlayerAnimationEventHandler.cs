@@ -16,6 +16,7 @@ namespace GraveyardIdle
         public void CanDig()
         {
             ShovelEvents.OnCanDig?.Invoke();
+            ShovelEvents.OnDigHappened?.Invoke();
         }
         public void CantDig()
         {

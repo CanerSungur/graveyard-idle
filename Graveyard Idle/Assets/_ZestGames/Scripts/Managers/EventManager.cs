@@ -5,13 +5,13 @@ namespace ZestGames
 {
     public static class EventManager { }
 
-    public static class GameEvents 
+    public static class GameEvents
     {
         public static Action OnGameStart, OnLevelSuccess, OnLevelFail, OnChangePhase;
         public static Action<Enums.GameEnd> OnGameEnd, OnChangeScene;
     }
 
-    public static class PlayerEvents 
+    public static class PlayerEvents
     {
         public static Action OnMove, OnIdle, OnTakeACoffin, OnDropCoffin, OnStartDigging, OnStopDigging;
         public static Action<Coffin> OnSetCarryingCoffin;
@@ -28,7 +28,7 @@ namespace ZestGames
     {
         public static Action<int> OnCollect;
     }
-    
+
     public static class InputEvents
     {
         public static Action OnTapHappened, OnTouchStarted, OnTouchStopped;
@@ -37,10 +37,22 @@ namespace ZestGames
     public static class CoffinAreaEvents
     {
         public static Action OnStackedCoffin, OnUnStackedCoffin;
+        public static Action<Truck> OnAssignTruck;
     }
 
     public static class ShovelEvents
     {
-        public static Action OnCanDig, OnCantDig;
+        public static Action OnCanDig, OnCantDig, OnDigHappened;
+    }
+
+    public static class GraveEvents
+    {
+        public static Action<Grave> OnAGraveIsDug;
+    }
+
+    public static class TruckEvents
+    {
+        public static Action<CoffinArea> OnEnableTruck;
+        public static Action OnDisableTruck;
     }
 }
