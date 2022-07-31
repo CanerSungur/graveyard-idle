@@ -2,11 +2,16 @@ using UnityEngine;
 using ZestCore.Ai;
 using System;
 using ZestGames;
+using Random = UnityEngine.Random;
 
 namespace GraveyardIdle
 {
     public class Truck : MonoBehaviour
     {
+        [Header("-- APPEREANCE SETUP --")]
+        [SerializeField] private Material[] materials;
+        [SerializeField] private MeshRenderer meshRenderer;
+
         [Header("-- POINT SETUP --")]
         [SerializeField] private Transform startPoint;
         [SerializeField] private Transform dropPoint;
@@ -37,6 +42,7 @@ namespace GraveyardIdle
             _initialized = true;
             _activatorCoffinArea = coffinArea;
             transform.position = startPoint.position;
+            meshRenderer.material = materials[Random.Range(0, materials.Length)];
 
             _targetReached = _moving = _hasCoffin = false;
 

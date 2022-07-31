@@ -1,49 +1,63 @@
 using UnityEngine;
-using ZestGames;
-using ZestCore.Utility;
 
 namespace GraveyardIdle
 {
     public class Grave : MonoBehaviour
     {
-        private SoilDeform _soil;
-        private bool _isDug = false;
+        private InteractableGround _interactableGround;
 
-        private void OnEnable()
+        [Header("-- LEVEL SETUP --")]
+        [SerializeField] private GameObject level_1_Object;
+        [SerializeField] private GameObject level_2_Object;
+        [SerializeField] private GameObject level_3_Object;
+        [SerializeField] private GameObject level_4_Object;
+        [SerializeField] private GameObject level_5_Object;
+
+        private readonly int _maxLevel = 5;
+        private int _level = 0;
+        private bool _isBuilt = false;
+
+        public void Init(InteractableGround interactableGround)
         {
-            _isDug = false;
-            _soil = GetComponentInChildren<SoilDeform>();
-            Delayer.DoActionAfterDelay(this, 2f, () => _soil.Init(this));
+            _interactableGround = interactableGround;
 
-            GraveEvents.OnAGraveIsDug += GraveIsDug;
+            _level = 0;
+            _isBuilt = false;
+
+            _interactableGround.OnGraveBuilt += GetBuilt;
         }
 
         private void OnDisable()
         {
-            GraveEvents.OnAGraveIsDug -= GraveIsDug;
+            if (!_interactableGround) return;
+            _interactableGround.OnGraveBuilt -= GetBuilt;
         }
 
-        private void GraveIsDug(Grave grave)
+        private void EnableRelevantGrave(int level)
         {
-            if (grave != this) return;
-            _isDug = true;
-            PlayerEvents.OnExitedDigZone?.Invoke();
+            if (_level == 1)
+                level_1_Object.SetActive(true);
         }
 
-        private void OnTriggerEnter(Collider other)
+        #region PUBLICS
+        public void GetBuilt()
         {
-            if (other.TryGetComponent(out Player player) && !player.IsInDigZone && !_isDug)
+            if (_isBuilt) return;
+
+            _isBuilt = true;
+            _level = 1;
+
+            EnableRelevantGrave(_level);
+        }
+        public void Upgrade()
+        {
+            _level++;
+
+            if (_level == _maxLevel)
             {
-                PlayerEvents.OnEnteredDigZone?.Invoke();
+                // Disable upgrade
             }
         }
-
-        private void OnTriggerExit(Collider other)
-        {
-            if (other.TryGetComponent(out Player player) && player.IsInDigZone)
-            {
-                PlayerEvents.OnExitedDigZone?.Invoke();
-            }
-        }
+        #endregion
     }
 }

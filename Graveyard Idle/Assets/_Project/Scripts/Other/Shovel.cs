@@ -18,6 +18,8 @@ namespace GraveyardIdle
         private Ray _ray;
         private RaycastHit _hit;
 
+        public bool ItCanDig => _canDig;
+
         public void Init(Player player)
         {
             _player = player;
@@ -27,8 +29,8 @@ namespace GraveyardIdle
             _digPoint = transform.GetChild(0);
             Disable();
 
-            PlayerEvents.OnStartDigging += Enable;
-            PlayerEvents.OnStopDigging += Disable;
+            PlayerEvents.OnEnteredDigZone += Enable;
+            PlayerEvents.OnExitedDigZone += Disable;
             ShovelEvents.OnCanDig += CanDig;
             ShovelEvents.OnCantDig += CantDig;
 
@@ -37,8 +39,8 @@ namespace GraveyardIdle
 
         private void OnDisable()
         {
-            PlayerEvents.OnStartDigging -= Enable;
-            PlayerEvents.OnStopDigging -= Disable;
+            PlayerEvents.OnEnteredDigZone -= Enable;
+            PlayerEvents.OnExitedDigZone -= Disable;
             ShovelEvents.OnCanDig -= CanDig;
             ShovelEvents.OnCantDig -= CantDig;
 
@@ -47,8 +49,8 @@ namespace GraveyardIdle
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out SoilDeform soilDeform) && _canDig)
-                soilDeform.DeformThis(_digPoint.position);
+            //if (other.TryGetComponent(out SoilDeform soilDeform) && _canDig)
+            //    soilDeform.DeformThis(_digPoint.position);
         }
 
         private void ShootRay()

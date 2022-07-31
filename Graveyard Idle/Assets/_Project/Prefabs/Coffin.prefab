@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4256312529764566067}
   - component: {fileID: 4256312529764566063}
   - component: {fileID: 4256312529764566060}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Coffin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,8 +83,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.66154903, y: 0.5608927, z: 1.7990539}
-  m_Center: {x: -0.01018092, y: -0.011984706, z: -0.0000000024273203}
+  m_Size: {x: 0.9122268, y: 0.6406264, z: 2.2414217}
+  m_Center: {x: -0.0011005998, y: -0.05185154, z: -0.006655216}
 --- !u!114 &4256312529764566063
 MonoBehaviour:
   m_ObjectHideFlags: 0

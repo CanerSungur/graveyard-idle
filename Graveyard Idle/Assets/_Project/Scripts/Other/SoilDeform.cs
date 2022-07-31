@@ -6,7 +6,7 @@ namespace GraveyardIdle
 {
     public class SoilDeform : MonoBehaviour
     {
-        private Grave _grave;
+        private GraveDiggable _grave;
         
         #region COMPONENTS
         private MeshFilter _meshFilter;
@@ -26,7 +26,7 @@ namespace GraveyardIdle
         [SerializeField] private float radius;
         [SerializeField] private float power;
 
-        public void Init(Grave grave)
+        public void Init(GraveDiggable grave)
         {
             _grave = grave;
 

@@ -15,6 +15,8 @@ namespace GraveyardIdle
         private readonly int _carryingCoffinID = Animator.StringToHash("CarryingCoffin");
         private readonly int _isInDiggingZoneID = Animator.StringToHash("InDiggingZone");
         private readonly int _digSpeedID = Animator.StringToHash("DigSpeed");
+        private readonly int _pullOutShovelID = Animator.StringToHash("PullOutShovel");
+        private readonly int _putDownShovelID = Animator.StringToHash("PutDownShovel");
         #endregion
 
         #region GETTERS
@@ -37,6 +39,10 @@ namespace GraveyardIdle
             PlayerEvents.OnDropCoffin += StopCarryingCoffin;
             PlayerEvents.OnEnteredDigZone += StartDigging;
             PlayerEvents.OnExitedDigZone += StopDigging;
+            //PlayerEvents.OnStopDigging += StopDigging;
+
+            PlayerEvents.OnEnteredDigZone += PullOutShovel;
+            PlayerEvents.OnExitedDigZone += PutDownShovel;
         }
 
         private void OnDisable()
@@ -47,16 +53,14 @@ namespace GraveyardIdle
             PlayerEvents.OnDropCoffin -= StopCarryingCoffin;
             PlayerEvents.OnEnteredDigZone -= StartDigging;
             PlayerEvents.OnExitedDigZone -= StopDigging;
+            //PlayerEvents.OnStopDigging -= StopDigging;
+
+            PlayerEvents.OnEnteredDigZone -= PullOutShovel;
+            PlayerEvents.OnExitedDigZone -= PutDownShovel;
         }
 
-        private void Run()
-        {
-            _animator.SetBool(_runID, true);
-        }
-        private void Idle()
-        {
-            _animator.SetBool(_runID, false);
-        }
+        private void Run() => _animator.SetBool(_runID, true);
+        private void Idle() => _animator.SetBool(_runID, false);
         private void StartCarryingCoffin()
         {
             _animator.SetFloat(_runSpeedID, 0.5f);
@@ -71,10 +75,9 @@ namespace GraveyardIdle
         {
             _animator.SetBool(_isInDiggingZoneID, true);
         }
-        private void StopDigging()
-        {
-            _animator.SetBool(_isInDiggingZoneID, false);
-        }
+        private void StopDigging() =>_animator.SetBool(_isInDiggingZoneID, false);
+        private void PullOutShovel() => _animator.SetTrigger(_pullOutShovelID);
+        private void PutDownShovel() => _animator.SetTrigger(_putDownShovelID);
 
         #region PUBLICS
         public void SetCoffinIK(Coffin coffin)
