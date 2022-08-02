@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6831751236002993790}
   - component: {fileID: 6831751236002993791}
   - component: {fileID: 6831751236002993788}
-  - component: {fileID: 6266915953535924711}
+  - component: {fileID: 2263428584826986830}
   m_Layer: 0
   m_Name: Pile_Soil
   m_TagString: Untagged
@@ -117,7 +117,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 289301614986012343, guid: 51f0ff3874d439c4ba7630f7aa257b17, type: 3}
---- !u!65 &6266915953535924711
+--- !u!65 &2263428584826986830
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -128,5 +128,5 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.0574431, y: 0.93481636, z: 1.1248255}
-  m_Center: {x: -0.07432771, y: 0.3462013, z: 0.071045876}
+  m_Size: {x: 0.9075942, y: 0.8806932, z: 0.83897734}
+  m_Center: {x: -0.08581138, y: 0.3191399, z: 0.36041093}

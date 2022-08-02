@@ -29,7 +29,7 @@ namespace GraveyardIdle
             PlayerEvents.OnDropCoffin -= StopIK;
         }
 
-        private void StopIK() => _rightHandObject = _leftHandObject = null;
+        private void StopIK(Coffin ignore, InteractableGround ignoreAlso) => _rightHandObject = _leftHandObject = null;
         private void OnAnimatorIK()
         {
             if (_animationController.Animator && _rightHandObject && _leftHandObject)

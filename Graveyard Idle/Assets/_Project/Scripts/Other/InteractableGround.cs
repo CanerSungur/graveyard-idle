@@ -1,10 +1,13 @@
 using System;
 using UnityEngine;
+using ZestGames;
 
 namespace GraveyardIdle
 {
     public class InteractableGround : MonoBehaviour
     {
+        [SerializeField] private bool startActivated = false;
+
         #region COMPONENTS
         private MeshRenderer _meshRenderer;
         public MeshRenderer MeshRenderer => _meshRenderer == null ? _meshRenderer = GetComponent<MeshRenderer>() : _meshRenderer;
@@ -25,8 +28,10 @@ namespace GraveyardIdle
         private InteractableGroundCanvas _canvas;
 
         #region PROPERTIES
-        public bool CanBeFilled { get; set; }
+        public bool HasCoffin { get; set; }
+        public bool CanBeFilled => HasCoffin;
         public bool CanBeDigged { get; set; }
+        public bool CanBeThrownCoffin { get; set; }
         #endregion
 
         #region EVENTS
@@ -35,7 +40,7 @@ namespace GraveyardIdle
 
         public void Init(ChangeableGraveGround changeableGraveGround)
         {
-            CanBeFilled = CanBeDigged = false;
+            HasCoffin = CanBeDigged = CanBeThrownCoffin = false;
 
             DiggableSoil.gameObject.SetActive(false);
             SoilPile.gameObject.SetActive(false);
@@ -49,6 +54,9 @@ namespace GraveyardIdle
             _canvas.transform.localPosition = new Vector3(0f, 0.32f, 0f);
             _canvas.transform.localRotation = Quaternion.Euler(91f, 180f, 0f);
             _canvas.Init(this);
+
+            if (startActivated)
+                ActivateGrave();
 
             OnGraveBuilt += GraveIsBuilt;
         }
@@ -78,6 +86,8 @@ namespace GraveyardIdle
             SoilPile.Init(this);
 
             CanBeDigged = true;
+
+            GraveManagerEvents.OnGraveActivated?.Invoke();
         }
         #endregion
     }

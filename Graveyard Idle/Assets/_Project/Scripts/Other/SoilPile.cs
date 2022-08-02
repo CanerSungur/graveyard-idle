@@ -15,28 +15,19 @@ namespace GraveyardIdle
         private MeshCollider _meshCollider;
 
         private bool _playerIsInArea = false;
+        public bool PlayerIsInArea => _playerIsInArea;
+        private int _currentBlendWeightIndex = -1;
+
+        #region FILLING
         private int _fillCount = 5;
         private int _currentFillCount = 0;
         private readonly float _getFilledDuration = 1f;
-
-        #region BLEND SHAPE INDEX
-        private readonly int _blendWeightIndex_1 = 0;
-        private readonly int _blendWeightIndex_2 = 1;
-        private readonly int _blendWeightIndex_3 = 2;
-        private readonly int _blendWeightIndex_4 = 3;
-        private readonly int _blendWeightIndex_5 = 4;
-        private int _currentBlendWeightIndex = -1;
         #endregion
 
         #region PILED VALUES
         private int _pileCount = 5;
         private int _currentPileCount = 0;
         private readonly float _getPiledDuration = 1f;
-        #endregion
-
-        #region POSITION
-        private readonly float _defaultHeight = 0f;
-        private readonly float _diggedHeight = -0.2f;
         #endregion
 
         #region SEQUENCE
@@ -55,14 +46,16 @@ namespace GraveyardIdle
 
             _playerIsInArea = false;
 
-            ShovelEvents.OnDigHappened += GetFilled;
+            ShovelEvents.OnFillHappened += GetFilled;
+            ShovelEvents.OnThrowSoilToPile += GetPiled;
         }
 
         private void OnDisable()
         {
             if (!_initialized) return;
 
-            ShovelEvents.OnDigHappened += GetFilled;
+            ShovelEvents.OnFillHappened -= GetFilled;
+            ShovelEvents.OnThrowSoilToPile -= GetPiled;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -70,7 +63,7 @@ namespace GraveyardIdle
             if (other.TryGetComponent(out Player player) && !_playerIsInArea && _interactableGround.CanBeFilled)
             {
                 _playerIsInArea = true;
-                PlayerEvents.OnEnteredDigZone?.Invoke();
+                PlayerEvents.OnEnteredFillZone?.Invoke();
             }
         }
 
@@ -79,10 +72,25 @@ namespace GraveyardIdle
             if (other.TryGetComponent(out Player player) && _playerIsInArea)
             {
                 _playerIsInArea = false;
-                PlayerEvents.OnExitedDigZone?.Invoke();
+                PlayerEvents.OnExitedFillZone?.Invoke();
             }
         }
 
+        private void GetPiled()
+        {
+            if (!_interactableGround.DiggableSoil.PlayerIsInArea) return;
+
+            _currentPileCount++;
+            _currentBlendWeightIndex = _pileCount - _currentPileCount;
+
+            StartGetPiledSequence(_currentBlendWeightIndex - 1);
+
+            if (_currentPileCount == _pileCount)
+            {
+                PlayerEvents.OnExitedDigZone?.Invoke();
+                PlayerEvents.OnStopDigging?.Invoke();
+            }
+        }
         private void GetFilled()
         {
             if (!_playerIsInArea || !_interactableGround.CanBeFilled) return;
@@ -90,17 +98,12 @@ namespace GraveyardIdle
             _currentBlendWeightIndex = _currentFillCount;
             _currentFillCount++;
 
-            StartGetFilledSequence(_currentBlendWeightIndex -1);
+            StartGetFilledSequence(_currentBlendWeightIndex - 1);
 
-            if (_currentFillCount == _fillCount)
-            {
-                PlayerEvents.OnExitedDigZone?.Invoke();
-                PlayerEvents.OnStopDigging?.Invoke();
-                _interactableGround.CanBeFilled = false;
-
-                Debug.Log("GRAVE IS FINISHED");
-                _interactableGround.OnGraveBuilt?.Invoke();
-            }
+            //if (_currentFillCount == _fillCount)
+            //{
+            //    _interactableGround.CanBeFilled = false;
+            //}
         }
         private void UpdateMeshCollider()
         {
@@ -118,7 +121,7 @@ namespace GraveyardIdle
             CreateGetFilledSequence(index);
             _getFilledSequence.Play();
 
-            _interactableGround.DiggableSoil.GetFilled();
+            //_interactableGround.DiggableSoil.GetFilled();
         }
         private void CreateGetFilledSequence(int index)
         {
@@ -128,7 +131,8 @@ namespace GraveyardIdle
                 _getFilledSequenceID = Guid.NewGuid();
                 _getFilledSequence.id = _getFilledSequenceID;
 
-                _getFilledSequence.Append(DOVirtual.Float(100f, 0f, _getFilledDuration, r => {
+                _getFilledSequence.Append(DOVirtual.Float(100f, 0f, _getFilledDuration, r =>
+                {
 
                     if (_currentBlendWeightIndex == 0) // meaning first iteration
                     {
@@ -148,9 +152,10 @@ namespace GraveyardIdle
                         _skinnedMeshRenderer.SetBlendShapeWeight(index, r);
 
                     UpdateMeshCollider();
-                })).OnComplete(() => {
+                })).OnComplete(() =>
+                {
                     DeleteGetFilledSequence();
-                    });
+                });
             }
         }
         private void DeleteGetFilledSequence()
@@ -174,12 +179,13 @@ namespace GraveyardIdle
                 _getPiledSequenceID = Guid.NewGuid();
                 _getPiledSequence.id = _getPiledSequenceID;
 
-                _getPiledSequence.Append(DOVirtual.Float(0f, 100f, _getPiledDuration, r => {
-                    
+                _getPiledSequence.Append(DOVirtual.Float(0f, 100f, _getPiledDuration, r =>
+                {
+
                     if (_currentBlendWeightIndex == _pileCount - 1) // meaning the first iteration
                     {
                         _skinnedMeshRenderer.SetBlendShapeWeight(index, r); // one before last
-                        
+
                         if (r > 50)
                             r = 50;
                         _skinnedMeshRenderer.SetBlendShapeWeight(index + 1, r); // last blend shape
@@ -194,25 +200,16 @@ namespace GraveyardIdle
                         _skinnedMeshRenderer.SetBlendShapeWeight(index, r);
 
                     UpdateMeshCollider();
-                })).OnComplete(() => {
-                        DeleteGetPiledSequence();
-                    });
+                })).OnComplete(() =>
+                {
+                    DeleteGetPiledSequence();
+                });
             }
         }
         private void DeleteGetPiledSequence()
         {
             DOTween.Kill(_getPiledSequenceID);
             _getPiledSequence = null;
-        }
-        #endregion
-
-        #region PUBLICS
-        public void GetPiled()
-        {
-            _currentPileCount++;
-            _currentBlendWeightIndex = _pileCount - _currentPileCount;
-
-            StartGetPiledSequence(_currentBlendWeightIndex - 1);
         }
         #endregion
     }

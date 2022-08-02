@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 5491084403859615927}
   - component: {fileID: 1124688366865923144}
   - component: {fileID: 8235525942019915963}
+  - component: {fileID: 3048080267234432275}
+  - component: {fileID: 925348985}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -133,3 +135,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   truck: {fileID: 0}
+--- !u!114 &3048080267234432275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5491084403859615924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e68d9631e07a5764787592276b2a4ca6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &925348985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5491084403859615924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378486e365c93c245aeb40079c54fa91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

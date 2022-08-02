@@ -23,10 +23,26 @@ namespace GraveyardIdle
             PlayerIsInArea = false;
         }
 
-        private void TakeCoffin()
+        public void TakeCoffin(Player player)
         {
+            PlayerIsInArea = true;
+            if (!GraveManager.CanCoffinBeingCarried)
+            {
+                // trigger there's no grave
+                UiEvents.OnPopupText?.Invoke(player.transform.position + (Vector3.up * 3f), "No Grave");
+                Debug.Log("no grave");
+                return;
+            }
+            else if (CoffinAreaStackHandler.CoffinsInArea.Count <= 0)
+            {
+                // trigger there's no coffin ui
+                UiEvents.OnPopupText?.Invoke(player.transform.position + (Vector3.up * 3f), "No Coffin");
+                Debug.Log("no coffin");
+                return;
+            }
             PlayerEvents.OnTakeACoffin?.Invoke();
         }
+        public void PlayerExitArea() => PlayerIsInArea = false;
 
         #region DOTWEEN FUNCTIONS
         private void CreateFillSequence()
@@ -37,7 +53,7 @@ namespace GraveyardIdle
                 _fillSequence.Append(DOVirtual.Float(_fillImage.fillAmount, 1f, _openingTime, r =>
                 {
                     _fillImage.fillAmount = r;
-                }).OnComplete(TakeCoffin));
+                })/*.OnComplete(TakeCoffin)*/);
 
                 _fillSequenceID = Guid.NewGuid();
                 _fillSequence.id = _fillSequenceID;

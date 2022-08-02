@@ -24,7 +24,7 @@ namespace GraveyardIdle
         {
             _player = player;
             _characterController = GetComponent<CharacterController>();
-            SetDefaultSpeed();
+            _currentSpeed = defaultSpeed;
 
             PlayerEvents.OnTakeACoffin += SetCarrySpeed;
             PlayerEvents.OnDropCoffin += SetDefaultSpeed;
@@ -55,6 +55,9 @@ namespace GraveyardIdle
 
                     if (_player.IsInDigZone && _player.IsDigging)
                         PlayerEvents.OnStopDigging?.Invoke();
+
+                    if (_player.IsInFillZone && _player.IsFilling)
+                        PlayerEvents.OnStopFilling?.Invoke();
                 }
             }
             else
@@ -66,6 +69,9 @@ namespace GraveyardIdle
 
                     if (_player.IsInDigZone && !_player.IsDigging && !_player.IsCarryingCoffin)
                         PlayerEvents.OnStartDigging?.Invoke();
+
+                    if (_player.IsInFillZone && !_player.IsFilling && !_player.IsCarryingCoffin)
+                        PlayerEvents.OnStartFilling?.Invoke();
                 }
             }
 
@@ -80,7 +86,7 @@ namespace GraveyardIdle
                 _characterController.Move(_currentSpeed * Time.deltaTime * _player.InputHandler.InputValue);
         }
         private void RotateForUpgradeCamera() => transform.rotation = Quaternion.identity;
-        private void SetDefaultSpeed() => _currentSpeed = defaultSpeed;
+        private void SetDefaultSpeed(Coffin ignore, InteractableGround ignoreAlso) => _currentSpeed = defaultSpeed;
         private void SetCarrySpeed() => _currentSpeed = carrySpeed;
     }
 }

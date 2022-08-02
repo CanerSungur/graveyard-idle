@@ -34,17 +34,20 @@ namespace GraveyardIdle
         public PlayerCollision CollisionHandler => _collisionHandler == null ? _collisionHandler = GetComponent<PlayerCollision>() : _collisionHandler;
         private PlayerStateController _stateController;
         public PlayerStateController StateController => _stateController == null ? _stateController = GetComponent<PlayerStateController>() : _stateController;
-        private PlayerDigHandler  _digHandler;
-        public PlayerDigHandler DigHandler => _digHandler == null ? _digHandler = GetComponent<PlayerDigHandler>() : _digHandler;
         private Shovel _shovel;
         public Shovel Shovel => _shovel == null ? _shovel = GetComponentInChildren<Shovel>() : _shovel;
+        private PlayerCoffinThrower _coffinThrower;
+        public PlayerCoffinThrower CoffinThrower => _coffinThrower == null ? _coffinThrower = GetComponent<PlayerCoffinThrower>() : _coffinThrower;
         #endregion
 
         #region PROPERTIES
         public bool IsCarryingCoffin { get; private set; }
         public bool IsDigging { get; private set; }
+        public bool IsFilling { get; private set; }
         public bool IsInDigZone { get; private set; }
+        public bool IsInFillZone { get; private set; }
         public Coffin CoffinCarryingNow { get; private set; }
+        public InteractableGround EnteredInteractableGround { get; private set; }
         #endregion
 
         #region GETTERS
@@ -53,16 +56,17 @@ namespace GraveyardIdle
 
         private void Start()
         {
-            IsCarryingCoffin = IsDigging = IsInDigZone = false;
+            IsCarryingCoffin = IsDigging = IsFilling = IsInDigZone = IsInFillZone = false;
             CoffinCarryingNow = null;
+            EnteredInteractableGround = null;
 
             InputHandler.Init(this);
             Movement.Init(this);
             AnimationController.Init(this);
             CollisionHandler.Init(this);
             StateController.Init(this);
-            DigHandler.Init(this);
             Shovel.Init(this);
+            CoffinThrower.Init(this);
 
             PlayerEvents.OnMove += TakeCoffinFurther;
             PlayerEvents.OnIdle += TakeCoffinCloser;
@@ -71,8 +75,12 @@ namespace GraveyardIdle
             PlayerEvents.OnSetCarryingCoffin += SetCarryingCoffin;
             PlayerEvents.OnStartDigging += StartDigging;
             PlayerEvents.OnStopDigging += StopDigging;
+            PlayerEvents.OnStartFilling += StartFilling;
+            PlayerEvents.OnStopFilling += StopFilling;
             PlayerEvents.OnEnteredDigZone += EnteredDigZone;
             PlayerEvents.OnExitedDigZone += ExitedDigZone;
+            PlayerEvents.OnEnteredFillZone += EnteredFillZone;
+            PlayerEvents.OnExitedFillZone += ExitedFillZone;
         }
 
         private void OnDisable()
@@ -84,14 +92,22 @@ namespace GraveyardIdle
             PlayerEvents.OnSetCarryingCoffin += SetCarryingCoffin;
             PlayerEvents.OnStartDigging -= StartDigging;
             PlayerEvents.OnStopDigging -= StopDigging;
+            PlayerEvents.OnStartFilling -= StartFilling;
+            PlayerEvents.OnStopFilling -= StopFilling;
             PlayerEvents.OnEnteredDigZone -= EnteredDigZone;
             PlayerEvents.OnExitedDigZone -= ExitedDigZone;
+            PlayerEvents.OnEnteredFillZone -= EnteredFillZone;
+            PlayerEvents.OnExitedFillZone -= ExitedFillZone;
         }
 
         private void EnteredDigZone() => IsInDigZone = true;
         private void ExitedDigZone() => IsInDigZone = false;
+        private void EnteredFillZone() => IsInFillZone = true;
+        private void ExitedFillZone() => IsInFillZone = false;
         private void StartDigging() => IsDigging = true;
         private void StopDigging() => IsDigging = false;
+        private void StartFilling() => IsFilling = true;
+        private void StopFilling() => IsFilling = false;
 
         #region COFFIN RELATED FUNCTIONS
         private void TakeCoffinFurther()
@@ -110,10 +126,10 @@ namespace GraveyardIdle
         {
             IsCarryingCoffin = true;
         }
-        private void DropCoffin()
+        private void DropCoffin(Coffin ignore, InteractableGround ignoreAlso)
         {
             IsCarryingCoffin = false;
-            CoffinCarryingNow.GetDropped();
+            //CoffinCarryingNow.GetDropped();
         }
         private void SetCarryingCoffin(Coffin coffin)
         {

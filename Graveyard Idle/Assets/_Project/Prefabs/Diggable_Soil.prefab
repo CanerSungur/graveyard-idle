@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5933965578368476608}
   - component: {fileID: 2108261615264518597}
   - component: {fileID: 5472857929267279317}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Diggable_Soil
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b498c7716c30a1419e277c1bbc03adb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blendWeight_1: 0
 --- !u!64 &5933965578368476608
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -146,5 +145,5 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.7289399, y: 1.4711504, z: 1.3581455}
-  m_Center: {x: 0.021834493, y: 0.3204136, z: -0.007597029}
+  m_Size: {x: 0.7289399, y: 1.4711504, z: 0.86344886}
+  m_Center: {x: 0.021834493, y: 0.3204136, z: -0.35625875}

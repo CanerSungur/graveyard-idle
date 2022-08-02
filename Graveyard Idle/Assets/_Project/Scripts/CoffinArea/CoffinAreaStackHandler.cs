@@ -28,11 +28,15 @@ namespace GraveyardIdle
         {
             if (!CoffinsInArea.Contains(coffin))
                 CoffinsInArea.Add(coffin);
+
+            Debug.Log(CoffinsInArea.Count);
         }
         public static void RemoveCoffin(Coffin coffin)
         {
             if (CoffinsInArea.Contains(coffin))
                 CoffinsInArea.Remove(coffin);
+
+            Debug.Log(CoffinsInArea.Count);
         }
         #endregion
 

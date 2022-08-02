@@ -1,5 +1,6 @@
 using UnityEngine;
 using DG.Tweening;
+using GraveyardIdle;
 
 namespace ZestGames
 {
@@ -13,6 +14,8 @@ namespace ZestGames
         private LevelManager _levelManager;
         private SettingsManager _settingsManager;
         private DataManager _dataManager;
+        private GraveManager _graveManager;
+        private PopupManager _popupManager;
 
         private void Init()
         {
@@ -27,6 +30,10 @@ namespace ZestGames
             _settingsManager.Init(this);
             _uiManager = GetComponent<UiManager>();
             _uiManager.Init(this);
+            _graveManager = GetComponent<GraveManager>();
+            _graveManager.Init(this);
+            _popupManager = GetComponent<PopupManager>();
+            _popupManager.Init(this);
 
             UiEvents.OnUpdateCollectableText?.Invoke(_dataManager.TotalMoney);
             UiEvents.OnUpdateLevelText?.Invoke(LevelHandler.Level);

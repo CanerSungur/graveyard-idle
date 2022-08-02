@@ -5,6 +5,8 @@ namespace GraveyardIdle
 {
     public class PlayerAnimationController : MonoBehaviour
     {
+        private Player _player;
+
         private Animator _animator;
         private PlayerHandsIKController _handsIKController;
         private PlayerAnimationEventHandler _animationEventHandler;
@@ -25,13 +27,16 @@ namespace GraveyardIdle
 
         public void Init(Player player)
         {
+            _player = player;
+
             _animator = GetComponentInChildren<Animator>();
             _animationEventHandler = GetComponentInChildren<PlayerAnimationEventHandler>();
-            _animationEventHandler.Init(this);
+            _animationEventHandler.Init(this, _player);
             _handsIKController = GetComponentInChildren<PlayerHandsIKController>();
             _handsIKController.Init(this);
-            
-            StopCarryingCoffin();
+
+            _animator.SetFloat(_runSpeedID, 1f);
+            _animator.SetBool(_carryingCoffinID, false);
 
             PlayerEvents.OnIdle += Idle;
             PlayerEvents.OnMove += Run;
@@ -39,6 +44,8 @@ namespace GraveyardIdle
             PlayerEvents.OnDropCoffin += StopCarryingCoffin;
             PlayerEvents.OnEnteredDigZone += StartDigging;
             PlayerEvents.OnExitedDigZone += StopDigging;
+            PlayerEvents.OnEnteredFillZone += StartDigging;
+            PlayerEvents.OnExitedFillZone += StopDigging;
             //PlayerEvents.OnStopDigging += StopDigging;
 
             PlayerEvents.OnEnteredDigZone += PullOutShovel;
@@ -53,6 +60,8 @@ namespace GraveyardIdle
             PlayerEvents.OnDropCoffin -= StopCarryingCoffin;
             PlayerEvents.OnEnteredDigZone -= StartDigging;
             PlayerEvents.OnExitedDigZone -= StopDigging;
+            PlayerEvents.OnEnteredFillZone -= StartDigging;
+            PlayerEvents.OnExitedFillZone -= StopDigging;
             //PlayerEvents.OnStopDigging -= StopDigging;
 
             PlayerEvents.OnEnteredDigZone -= PullOutShovel;
@@ -66,7 +75,7 @@ namespace GraveyardIdle
             _animator.SetFloat(_runSpeedID, 0.5f);
             _animator.SetBool(_carryingCoffinID, true);
         }
-        private void StopCarryingCoffin()
+        private void StopCarryingCoffin(Coffin ignore, InteractableGround ignoreAlso)
         {
             _animator.SetFloat(_runSpeedID, 1f);
             _animator.SetBool(_carryingCoffinID, false);
