@@ -19,9 +19,9 @@ namespace GraveyardIdle
         private int _currentBlendWeightIndex = -1;
 
         #region FILLING
-        private int _fillCount = 5;
-        private int _currentFillCount = 0;
-        private readonly float _getFilledDuration = 1f;
+        private int _emptiedCount = 5;
+        private int _currentEmptiedCount = 0;
+        private readonly float _getEmptiedDuration = 1f;
         #endregion
 
         #region PILED VALUES
@@ -46,7 +46,7 @@ namespace GraveyardIdle
 
             _playerIsInArea = false;
 
-            ShovelEvents.OnFillHappened += GetFilled;
+            ShovelEvents.OnFillHappened += GetEmtptied;
             ShovelEvents.OnThrowSoilToPile += GetPiled;
         }
 
@@ -54,7 +54,7 @@ namespace GraveyardIdle
         {
             if (!_initialized) return;
 
-            ShovelEvents.OnFillHappened -= GetFilled;
+            ShovelEvents.OnFillHappened -= GetEmtptied;
             ShovelEvents.OnThrowSoilToPile -= GetPiled;
         }
 
@@ -85,18 +85,18 @@ namespace GraveyardIdle
 
             StartGetPiledSequence(_currentBlendWeightIndex - 1);
 
-            if (_currentPileCount == _pileCount)
-            {
-                PlayerEvents.OnExitedDigZone?.Invoke();
-                PlayerEvents.OnStopDigging?.Invoke();
-            }
+            //if (_currentPileCount == _pileCount)
+            //{
+            //    PlayerEvents.OnExitedDigZone?.Invoke();
+            //    PlayerEvents.OnStopDigging?.Invoke();
+            //}
         }
-        private void GetFilled()
+        private void GetEmtptied()
         {
             if (!_playerIsInArea || !_interactableGround.CanBeFilled) return;
 
-            _currentBlendWeightIndex = _currentFillCount;
-            _currentFillCount++;
+            _currentBlendWeightIndex = _currentEmptiedCount;
+            _currentEmptiedCount++;
 
             StartGetFilledSequence(_currentBlendWeightIndex - 1);
 
@@ -104,6 +104,11 @@ namespace GraveyardIdle
             //{
             //    _interactableGround.CanBeFilled = false;
             //}
+            if (_currentEmptiedCount == _emptiedCount)
+            {
+                PlayerEvents.OnExitedFillZone?.Invoke();
+                PlayerEvents.OnStopFilling?.Invoke();
+            }
         }
         private void UpdateMeshCollider()
         {
@@ -131,7 +136,7 @@ namespace GraveyardIdle
                 _getFilledSequenceID = Guid.NewGuid();
                 _getFilledSequence.id = _getFilledSequenceID;
 
-                _getFilledSequence.Append(DOVirtual.Float(100f, 0f, _getFilledDuration, r =>
+                _getFilledSequence.Append(DOVirtual.Float(100f, 0f, _getEmptiedDuration, r =>
                 {
 
                     if (_currentBlendWeightIndex == 0) // meaning first iteration
@@ -140,7 +145,7 @@ namespace GraveyardIdle
                             r = 50;
                         _skinnedMeshRenderer.SetBlendShapeWeight(4, r);
                     }
-                    else if (_currentBlendWeightIndex == _fillCount - 1) // meaning last iteration
+                    else if (_currentBlendWeightIndex == _emptiedCount - 1) // meaning last iteration
                     {
                         _skinnedMeshRenderer.SetBlendShapeWeight(index, r);
 

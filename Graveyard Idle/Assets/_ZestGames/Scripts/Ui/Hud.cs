@@ -9,8 +9,10 @@ namespace ZestGames
         [Header("-- TEXT --")]
         [SerializeField] private TextMeshProUGUI levelText;
         [SerializeField] private TextMeshProUGUI collectableText;
+        [SerializeField] private GameObject collectableImage;
 
         public static Transform CollectableHUDTransform { get; private set; }
+        public static Vector2 MoneyAnchoredPosition { get; private set; }
 
         public void Init(UiManager uiManager)
         {
@@ -18,6 +20,7 @@ namespace ZestGames
             UiEvents.OnUpdateCollectableText += UpdateMoneyText;
 
             CollectableHUDTransform = collectableText.transform.parent;
+            MoneyAnchoredPosition = collectableImage.GetComponent<RectTransform>().anchoredPosition;
         }
 
         private void OnDisable()

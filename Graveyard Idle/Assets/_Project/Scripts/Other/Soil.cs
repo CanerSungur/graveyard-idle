@@ -90,14 +90,13 @@ namespace GraveyardIdle
 
             StartGetFilledSequence(_currentBlendWeightIndex);
 
-            if (_currentFillCount == _fillCount)
-            {
-                PlayerEvents.OnExitedFillZone?.Invoke();
-                PlayerEvents.OnStopFilling?.Invoke();
+            //if (_currentFillCount == _fillCount)
+            //{
+            //    PlayerEvents.OnExitedFillZone?.Invoke();
+            //    PlayerEvents.OnStopFilling?.Invoke();
 
-                Debug.Log("GRAVE FINISHED");
-                _interactableGround.OnGraveBuilt?.Invoke();
-            }
+                
+            //}
         }
         private void GetDigged()
         {
@@ -110,6 +109,9 @@ namespace GraveyardIdle
 
             if (_currentDigCount == _digCount)
             {
+                PlayerEvents.OnExitedDigZone?.Invoke();
+                PlayerEvents.OnStopDigging?.Invoke();
+
                 _interactableGround.CanBeDigged = false;
                 _interactableGround.CanBeThrownCoffin = true;
 
@@ -187,6 +189,12 @@ namespace GraveyardIdle
                     }))
                     .OnComplete(() => {
                         DeleteGetFilledSequence();
+
+                        if (_currentFillCount == _fillCount)
+                        {
+                            Debug.Log("GRAVE FINISHED");
+                            _interactableGround.OnGraveBuilt?.Invoke();
+                        }
                     });
             }
         }

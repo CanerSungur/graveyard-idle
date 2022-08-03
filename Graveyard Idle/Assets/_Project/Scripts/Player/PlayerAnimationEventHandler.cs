@@ -23,13 +23,13 @@ namespace GraveyardIdle
             {
                 ShovelEvents.OnDigHappened?.Invoke();
                 //Delayer.DoActionAfterDelay(this, 1f, () => ShovelEvents.OnThrowSoilToPile?.Invoke());
-                Delayer.DoActionAfterDelay(this, 1f, () => ShovelEvents.OnPlaySoilFX?.Invoke(Enums.SoilThrowTarget.Pile));
+                Delayer.DoActionAfterDelay(this, .8f, () => ShovelEvents.OnPlaySoilFX?.Invoke(Enums.SoilThrowTarget.Pile));
             }
             else if (_player.IsFilling)
             {
                 ShovelEvents.OnFillHappened?.Invoke();
                 //Delayer.DoActionAfterDelay(this, 1f, () => ShovelEvents.OnThrowSoilToGrave?.Invoke());
-                Delayer.DoActionAfterDelay(this, 1f, () => ShovelEvents.OnPlaySoilFX?.Invoke(Enums.SoilThrowTarget.Grave));
+                Delayer.DoActionAfterDelay(this, .8f, () => ShovelEvents.OnPlaySoilFX?.Invoke(Enums.SoilThrowTarget.Grave));
             }
         }
         public void CantDig()

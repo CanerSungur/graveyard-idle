@@ -7,6 +7,7 @@ namespace GraveyardIdle
     public class InteractableGround : MonoBehaviour
     {
         [SerializeField] private bool startActivated = false;
+        private int _id;
 
         #region COMPONENTS
         private MeshRenderer _meshRenderer;
@@ -28,6 +29,7 @@ namespace GraveyardIdle
         private InteractableGroundCanvas _canvas;
 
         #region PROPERTIES
+        public bool GraveIsActivated { get; private set; }
         public bool HasCoffin { get; set; }
         public bool CanBeFilled => HasCoffin;
         public bool CanBeDigged { get; set; }
@@ -35,12 +37,13 @@ namespace GraveyardIdle
         #endregion
 
         #region EVENTS
-        public Action OnGraveBuilt;
+        public Action OnGraveBuilt, OnGraveUpgraded;
         #endregion
 
-        public void Init(ChangeableGraveGround changeableGraveGround)
+        public void Init(ChangeableGraveGround changeableGraveGround, int id)
         {
-            HasCoffin = CanBeDigged = CanBeThrownCoffin = false;
+            _id = id;
+            GraveIsActivated = HasCoffin = CanBeDigged = CanBeThrownCoffin = false;
 
             DiggableSoil.gameObject.SetActive(false);
             SoilPile.gameObject.SetActive(false);
@@ -58,12 +61,16 @@ namespace GraveyardIdle
             if (startActivated)
                 ActivateGrave();
 
+            LoadData();
+
             OnGraveBuilt += GraveIsBuilt;
         }
 
         private void OnDisable()
         {
             OnGraveBuilt -= GraveIsBuilt;
+
+            SaveData();
         }
 
         private void GraveIsBuilt()
@@ -85,10 +92,27 @@ namespace GraveyardIdle
             SoilPile.gameObject.SetActive(true);
             SoilPile.Init(this);
 
-            CanBeDigged = true;
+            GraveIsActivated = CanBeDigged = true;
 
             GraveManagerEvents.OnGraveActivated?.Invoke();
         }
+        #endregion
+
+        #region SAVE-LOAD
+        private void SaveData()
+        {
+            PlayerPrefs.SetInt($"Grave_{_id}_Activated", GraveIsActivated == true ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+        private void LoadData()
+        {
+            GraveIsActivated = PlayerPrefs.GetInt($"Grave_{_id}_Activated", 0) == 1;
+
+            if (GraveIsActivated)
+                ActivateGrave();
+        }
+        private void OnApplicationQuit() => SaveData();
+        //private void OnApplicationPause(bool pause) => SaveData();
         #endregion
     }
 }

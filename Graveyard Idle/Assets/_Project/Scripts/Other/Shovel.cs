@@ -50,8 +50,6 @@ namespace GraveyardIdle
             ShovelEvents.OnPlaySoilFX += PlaySoilFX;
             ShovelEvents.OnDigHappened += FillSoil;
             ShovelEvents.OnFillHappened += FillSoil;
-
-            //ShovelEvents.OnDigHappened += ShootRay;
         }
 
         private void OnDisable()
@@ -65,15 +63,8 @@ namespace GraveyardIdle
             ShovelEvents.OnPlaySoilFX -= PlaySoilFX;
             ShovelEvents.OnDigHappened -= FillSoil;
             ShovelEvents.OnFillHappened -= FillSoil;
-
-            //ShovelEvents.OnDigHappened -= ShootRay;
         }
 
-        private void OnTriggerEnter(Collider other)
-        {
-            //if (other.TryGetComponent(out SoilDeform soilDeform) && _canDig)
-            //    soilDeform.DeformThis(_digPoint.position);
-        }
         private void ShootRay()
         {
             if (Physics.Raycast(_player.transform.position, Vector3.down, out _hit, 2f, soilMask))
@@ -126,7 +117,7 @@ namespace GraveyardIdle
                 _changeSoilScaleSequenceID = Guid.NewGuid();
                 _changeSoilScaleSequence.id = _changeSoilScaleSequenceID;
 
-                _changeSoilScaleSequence.Append(DOVirtual.Vector3(soil.transform.localScale, targetScale, .5f, r => {
+                _changeSoilScaleSequence.Append(DOVirtual.Vector3(soil.transform.localScale, targetScale, .1f, r => {
                     soil.transform.localScale = r;
                 })).OnComplete(() => DeleteChangeSoilScaleSequence());
             }

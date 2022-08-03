@@ -58,9 +58,15 @@ namespace GraveyardIdle
             }
 
             if (_player.IsDigging)
+            {
                 _meshTransform.rotation = Quaternion.Lerp(_meshTransform.rotation, Quaternion.identity, 2f * Time.deltaTime);
+                transform.rotation = Quaternion.identity;
+            }
             else if (_player.IsFilling)
+            {
                 _meshTransform.rotation = Quaternion.Lerp(_meshTransform.rotation, Quaternion.Euler(0f, 180f, 0f), 2f * Time.deltaTime);
+                transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+            }
         }
 
         private void StartedDigging() => _activateRotation = true;

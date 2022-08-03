@@ -28,7 +28,7 @@ namespace ZestGames
 
     public static class CollectableEvents
     {
-        public static Action<int> OnCollect;
+        public static Action<int> OnCollect, OnConsume;
     }
 
     public static class InputEvents
@@ -63,5 +63,10 @@ namespace ZestGames
     public static class GraveManagerEvents
     {
         public static Action OnGraveActivated, OnGraveDigged, OnCoffinThrownToGrave, OnCoffinPickedUp;
+    }
+
+    public static class AudioEvents
+    {
+        public static Action OnPlayCollectMoney, OnPlaySpendMoney;
     }
 }

@@ -38,6 +38,8 @@ namespace GraveyardIdle
         public Shovel Shovel => _shovel == null ? _shovel = GetComponentInChildren<Shovel>() : _shovel;
         private PlayerCoffinThrower _coffinThrower;
         public PlayerCoffinThrower CoffinThrower => _coffinThrower == null ? _coffinThrower = GetComponent<PlayerCoffinThrower>() : _coffinThrower;
+        private PlayerMoneyHandler _moneyHandler;
+        public PlayerMoneyHandler MoneyHandler => _moneyHandler == null ? _moneyHandler = GetComponent<PlayerMoneyHandler>() : _moneyHandler;
         #endregion
 
         #region PROPERTIES
@@ -67,6 +69,7 @@ namespace GraveyardIdle
             StateController.Init(this);
             Shovel.Init(this);
             CoffinThrower.Init(this);
+            MoneyHandler.Init(this);
 
             PlayerEvents.OnMove += TakeCoffinFurther;
             PlayerEvents.OnIdle += TakeCoffinCloser;

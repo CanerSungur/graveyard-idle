@@ -50,6 +50,8 @@ namespace GraveyardIdle
 
             PlayerEvents.OnEnteredDigZone += PullOutShovel;
             PlayerEvents.OnExitedDigZone += PutDownShovel;
+            PlayerEvents.OnEnteredFillZone += PullOutShovel;
+            PlayerEvents.OnExitedFillZone += PutDownShovel;
         }
 
         private void OnDisable()
@@ -66,6 +68,8 @@ namespace GraveyardIdle
 
             PlayerEvents.OnEnteredDigZone -= PullOutShovel;
             PlayerEvents.OnExitedDigZone -= PutDownShovel;
+            PlayerEvents.OnEnteredFillZone -= PullOutShovel;
+            PlayerEvents.OnExitedFillZone -= PutDownShovel;
         }
 
         private void Run() => _animator.SetBool(_runID, true);

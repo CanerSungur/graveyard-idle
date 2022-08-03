@@ -20,7 +20,7 @@ namespace GraveyardIdle
         private void InitializeGrounds()
         {
             for (int i = 0; i < interactableGrounds.Length; i++)
-                interactableGrounds[i].Init(this);
+                interactableGrounds[i].Init(this, i);
         }
     }
 }

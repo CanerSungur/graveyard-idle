@@ -330,6 +330,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198567290778272910, guid: c02b154f3d6883e478572cb2864e6767, type: 3}
+      propertyPath: ShapeModule.m_Rotation.x
+      value: -25
+      objectReference: {fileID: 0}
+    - target: {fileID: 198567290778272910, guid: c02b154f3d6883e478572cb2864e6767, type: 3}
       propertyPath: InitialModule.maxNumParticles
       value: 200
       objectReference: {fileID: 0}

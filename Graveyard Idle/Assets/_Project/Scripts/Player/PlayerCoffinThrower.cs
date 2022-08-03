@@ -7,8 +7,6 @@ namespace GraveyardIdle
     {
         private Player _player;
 
-        [SerializeField] private Transform throwTransform;
-
         public void Init(Player player)
         {
             _player = player;

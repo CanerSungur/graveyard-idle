@@ -14,7 +14,7 @@ namespace GraveyardIdle
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out TakeCoffinArea takeCoffinArea) && !takeCoffinArea.PlayerIsInArea)
+            if (other.TryGetComponent(out TakeCoffinArea takeCoffinArea) && !takeCoffinArea.PlayerIsInArea && !_player.IsCarryingCoffin)
             {
                 //takeCoffinArea.StartOpening();
                 takeCoffinArea.TakeCoffin(_player);
@@ -40,6 +40,16 @@ namespace GraveyardIdle
 
             if (other.TryGetComponent(out InteractableGroundCanvas interactableGroundCanvas) && !interactableGroundCanvas.PlayerIsInArea)
                 interactableGroundCanvas.StartOpening();
+
+            if (other.gameObject.layer == LayerMask.NameToLayer("GraveUpgradeArea"))
+            {
+                GraveUpgradeHandler graveUpgradeHandler = other.GetComponentInParent<GraveUpgradeHandler>();
+                if (graveUpgradeHandler != null && !graveUpgradeHandler.Grave.PlayerIsInUpgradeArea)
+                {
+                    graveUpgradeHandler.PlayerStartedUpgrading();
+                    _player.MoneyHandler.StartSpending(graveUpgradeHandler);
+                }
+            }
         }
 
         private void OnTriggerExit(Collider other)
@@ -58,6 +68,16 @@ namespace GraveyardIdle
 
             if (other.TryGetComponent(out InteractableGroundCanvas interactableGroundCanvas) && interactableGroundCanvas.PlayerIsInArea)
                 interactableGroundCanvas.StopOpening();
+
+            if (other.gameObject.layer == LayerMask.NameToLayer("GraveUpgradeArea"))
+            {
+                GraveUpgradeHandler graveUpgradeHandler = other.GetComponentInParent<GraveUpgradeHandler>();
+                if (graveUpgradeHandler != null && graveUpgradeHandler.Grave.PlayerIsInUpgradeArea)
+                {
+                    graveUpgradeHandler.PlayerStoppedUpgrading();
+                    _player.MoneyHandler.StopSpending(graveUpgradeHandler);
+                }
+            }
         }
     }
 }

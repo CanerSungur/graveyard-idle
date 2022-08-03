@@ -41,6 +41,7 @@ namespace GraveyardIdle
                 return;
             }
             PlayerEvents.OnTakeACoffin?.Invoke();
+            PlayerIsInArea = false;
         }
         public void PlayerExitArea() => PlayerIsInArea = false;
 

@@ -35,7 +35,7 @@ namespace ZestGames
             _popupManager = GetComponent<PopupManager>();
             _popupManager.Init(this);
 
-            UiEvents.OnUpdateCollectableText?.Invoke(_dataManager.TotalMoney);
+            UiEvents.OnUpdateCollectableText?.Invoke(DataManager.TotalMoney);
             UiEvents.OnUpdateLevelText?.Invoke(LevelHandler.Level);
         }
 

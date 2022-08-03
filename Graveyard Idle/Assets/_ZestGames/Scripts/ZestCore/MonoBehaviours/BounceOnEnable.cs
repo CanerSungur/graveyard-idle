@@ -8,8 +8,8 @@ namespace ZestGames
         private void OnEnable()
         {
             transform.DORewind();
-            transform.DOShakeRotation(.5f, .5f);
-            transform.DOShakeScale(.5f, .5f);
+            //transform.DOShakeRotation(.5f, .5f);
+            transform.DOShakeScale(1f, .5f);
         }
     }
 }
