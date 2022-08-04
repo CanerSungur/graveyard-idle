@@ -12,7 +12,7 @@ namespace ZestGames
         public void Init(GameManager gameManager)
         {
             _gameManager = gameManager;
-            SoundOn = VibrationOn = false;
+            SoundOn = VibrationOn = true;
         }
     }
 }

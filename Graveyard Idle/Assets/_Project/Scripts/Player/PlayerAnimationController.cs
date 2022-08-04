@@ -23,6 +23,7 @@ namespace GraveyardIdle
 
         #region GETTERS
         public Animator Animator => _animator;
+        public Player Player => _player;
         #endregion
 
         public void Init(Player player)
@@ -37,6 +38,7 @@ namespace GraveyardIdle
 
             _animator.SetFloat(_runSpeedID, 1f);
             _animator.SetBool(_carryingCoffinID, false);
+            UpdateDigSpeed();
 
             PlayerEvents.OnIdle += Idle;
             PlayerEvents.OnMove += Run;
@@ -48,10 +50,10 @@ namespace GraveyardIdle
             PlayerEvents.OnExitedFillZone += StopDigging;
             //PlayerEvents.OnStopDigging += StopDigging;
 
-            PlayerEvents.OnEnteredDigZone += PullOutShovel;
-            PlayerEvents.OnExitedDigZone += PutDownShovel;
-            PlayerEvents.OnEnteredFillZone += PullOutShovel;
-            PlayerEvents.OnExitedFillZone += PutDownShovel;
+            PlayerEvents.OnPullOutShovel += PullOutShovel;
+            PlayerEvents.OnPutDownShovel += PutDownShovel;
+
+            PlayerEvents.OnSetCurrentDigSpeed += UpdateDigSpeed;
         }
 
         private void OnDisable()
@@ -66,10 +68,10 @@ namespace GraveyardIdle
             PlayerEvents.OnExitedFillZone -= StopDigging;
             //PlayerEvents.OnStopDigging -= StopDigging;
 
-            PlayerEvents.OnEnteredDigZone -= PullOutShovel;
-            PlayerEvents.OnExitedDigZone -= PutDownShovel;
-            PlayerEvents.OnEnteredFillZone -= PullOutShovel;
-            PlayerEvents.OnExitedFillZone -= PutDownShovel;
+            PlayerEvents.OnPullOutShovel -= PullOutShovel;
+            PlayerEvents.OnPutDownShovel -= PutDownShovel;
+
+            PlayerEvents.OnSetCurrentDigSpeed -= UpdateDigSpeed;
         }
 
         private void Run() => _animator.SetBool(_runID, true);
@@ -91,6 +93,7 @@ namespace GraveyardIdle
         private void StopDigging() =>_animator.SetBool(_isInDiggingZoneID, false);
         private void PullOutShovel() => _animator.SetTrigger(_pullOutShovelID);
         private void PutDownShovel() => _animator.SetTrigger(_putDownShovelID);
+        private void UpdateDigSpeed() => _animator.SetFloat(_digSpeedID, DataManager.DigSpeed);
 
         #region PUBLICS
         public void SetCoffinIK(Coffin coffin)

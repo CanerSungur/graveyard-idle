@@ -8,9 +8,10 @@ namespace GraveyardIdle
     public class Shovel : MonoBehaviour
     {
         [Header("-- DIG SETUP --")]
+        [SerializeField] private Transform throwSoilPoint;
         [SerializeField] private LayerMask soilMask;
         [SerializeField] private Transform soil;
-        private ShovelSoilParticles _soilParticle;
+        //private ShovelSoilParticles _soilParticle;
 
         private Player _player;
 
@@ -23,6 +24,7 @@ namespace GraveyardIdle
         private RaycastHit _hit;
 
         public bool ItCanDig => _canDig;
+        public bool PutItDown { get; private set; }
 
         #region SEQUENCE
         private Sequence _changeSoilScaleSequence;
@@ -32,19 +34,24 @@ namespace GraveyardIdle
         public void Init(Player player)
         {
             _player = player;
-            _soilParticle = GetComponentInChildren<ShovelSoilParticles>();
-            _soilParticle.Init(this);
+            //_soilParticle = GetComponentInChildren<ShovelSoilParticles>();
+            //_soilParticle.Init(this);
             soil.localScale = Vector3.zero;
 
             _collider = GetComponent<Collider>();
             _meshRenderer = GetComponent<MeshRenderer>();
             _digPoint = transform.GetChild(0);
-            Disable();
 
-            PlayerEvents.OnEnteredDigZone += Enable;
-            PlayerEvents.OnExitedDigZone += Disable;
-            PlayerEvents.OnEnteredFillZone += Enable;
-            PlayerEvents.OnExitedFillZone += Disable;
+            PutDown();
+            DisableMesh();
+
+            PlayerEvents.OnEnteredDigZone += PullOut;
+            PlayerEvents.OnExitedDigZone += PutDown;
+            PlayerEvents.OnEnteredFillZone += PullOut;
+            PlayerEvents.OnExitedFillZone += PutDown;
+
+            ShovelEvents.OnEnableMesh += EnableMesh;
+            ShovelEvents.OnDisableMesh += DisableMesh;
             ShovelEvents.OnCanDig += CanDig;
             ShovelEvents.OnCantDig += CantDig;
             ShovelEvents.OnPlaySoilFX += PlaySoilFX;
@@ -54,10 +61,13 @@ namespace GraveyardIdle
 
         private void OnDisable()
         {
-            PlayerEvents.OnEnteredDigZone -= Enable;
-            PlayerEvents.OnExitedDigZone -= Disable;
-            PlayerEvents.OnEnteredFillZone -= Enable;
-            PlayerEvents.OnExitedFillZone -= Disable;
+            PlayerEvents.OnEnteredDigZone -= PullOut;
+            PlayerEvents.OnExitedDigZone -= PutDown;
+            PlayerEvents.OnEnteredFillZone -= PullOut;
+            PlayerEvents.OnExitedFillZone -= PutDown;
+
+            ShovelEvents.OnEnableMesh -= EnableMesh;
+            ShovelEvents.OnDisableMesh -= DisableMesh;
             ShovelEvents.OnCanDig -= CanDig;
             ShovelEvents.OnCantDig -= CantDig;
             ShovelEvents.OnPlaySoilFX -= PlaySoilFX;
@@ -75,17 +85,24 @@ namespace GraveyardIdle
         }
         private void PlaySoilFX(Enums.SoilThrowTarget soilThrowTarget)
         {
-            _soilParticle.ActivateSoilParticle(soilThrowTarget);
+            ShovelSoilParticles shovelSoilParticle = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.ThrowSoilPS, throwSoilPoint.position, Quaternion.identity, throwSoilPoint).GetComponent<ShovelSoilParticles>();
+            shovelSoilParticle.transform.localPosition = Vector3.zero;
+            shovelSoilParticle.transform.localRotation = Quaternion.identity;
+            shovelSoilParticle.Init(this, soilThrowTarget);
+
+            //_soilParticle.ActivateSoilParticle(soilThrowTarget);
             EmptySoil();
         }
-        private void Enable()
+        private void EnableMesh() => _collider.enabled = _meshRenderer.enabled = true;
+        private void DisableMesh() => _collider.enabled = _meshRenderer.enabled = false;
+        private void PullOut()
         {
-            _collider.enabled = _meshRenderer.enabled = true;
+            PutItDown = false;
         }
-        private void Disable()
+        private void PutDown()
         {
-            _collider.enabled = _meshRenderer.enabled = false;
             _canDig = false;
+            PutItDown = true;
         }
         private void CanDig() => _canDig = true;
         private void CantDig() => _canDig = false;

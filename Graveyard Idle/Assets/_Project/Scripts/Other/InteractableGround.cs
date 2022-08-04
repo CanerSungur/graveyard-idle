@@ -30,10 +30,12 @@ namespace GraveyardIdle
 
         #region PROPERTIES
         public bool GraveIsActivated { get; private set; }
+        public bool GraveIsBuilt { get; private set; }
         public bool HasCoffin { get; set; }
         public bool CanBeFilled => HasCoffin;
         public bool CanBeDigged { get; set; }
         public bool CanBeThrownCoffin { get; set; }
+        public int ID => _id;
         #endregion
 
         #region EVENTS
@@ -43,7 +45,7 @@ namespace GraveyardIdle
         public void Init(ChangeableGraveGround changeableGraveGround, int id)
         {
             _id = id;
-            GraveIsActivated = HasCoffin = CanBeDigged = CanBeThrownCoffin = false;
+            GraveIsActivated = GraveIsBuilt = HasCoffin = CanBeDigged = CanBeThrownCoffin = false;
 
             DiggableSoil.gameObject.SetActive(false);
             SoilPile.gameObject.SetActive(false);
@@ -63,18 +65,19 @@ namespace GraveyardIdle
 
             LoadData();
 
-            OnGraveBuilt += GraveIsBuilt;
+            OnGraveBuilt += HandleGraveBuild;
         }
 
         private void OnDisable()
         {
-            OnGraveBuilt -= GraveIsBuilt;
+            OnGraveBuilt -= HandleGraveBuild;
 
             SaveData();
         }
 
-        private void GraveIsBuilt()
+        private void HandleGraveBuild()
         {
+            GraveIsBuilt = true;
             MeshRenderer.enabled = true;
             Collider.enabled = true;
             SoilPile.gameObject.SetActive(false);
@@ -102,13 +105,17 @@ namespace GraveyardIdle
         private void SaveData()
         {
             PlayerPrefs.SetInt($"Grave_{_id}_Activated", GraveIsActivated == true ? 1 : 0);
+            PlayerPrefs.SetInt($"Grave_{_id}_Built", GraveIsBuilt == true ? 1 : 0);
             PlayerPrefs.Save();
         }
         private void LoadData()
         {
             GraveIsActivated = PlayerPrefs.GetInt($"Grave_{_id}_Activated", 0) == 1;
+            GraveIsBuilt = PlayerPrefs.GetInt($"Grave_{_id}_Built", 0) == 1;
 
-            if (GraveIsActivated)
+            if (GraveIsBuilt)
+                HandleGraveBuild();
+            else if (GraveIsBuilt && GraveIsActivated)
                 ActivateGrave();
         }
         private void OnApplicationQuit() => SaveData();

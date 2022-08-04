@@ -16,7 +16,13 @@ namespace ZestGames
         public static Action OnMove, OnIdle, OnTakeACoffin, OnStartDigging, OnStopDigging, OnStartFilling, OnStopFilling;
         public static Action<Coffin, InteractableGround> OnDropCoffin;
         public static Action<Coffin> OnSetCarryingCoffin;
-        public static Action OnEnteredDigZone, OnExitedDigZone, OnEnteredFillZone, OnExitedFillZone;
+        public static Action OnEnteredDigZone, OnExitedDigZone, OnEnteredFillZone, OnExitedFillZone, OnPutDownShovel, OnPullOutShovel;
+        public static Action OnSetCurrentDigSpeed;
+    }
+
+    public static class PlayerUpgradeEvents
+    {
+        public static Action OnUpdateUpgradeTexts, OnUpgradeDigSpeed;
     }
 
     public static class UiEvents
@@ -44,7 +50,7 @@ namespace ZestGames
 
     public static class ShovelEvents
     {
-        public static Action OnCanDig, OnCantDig, OnDigHappened, OnFillHappened;
+        public static Action OnCanDig, OnCantDig, OnDigHappened, OnFillHappened, OnEnableMesh, OnDisableMesh;
         public static Action OnThrowSoilToGrave, OnThrowSoilToPile;
         public static Action<Enums.SoilThrowTarget> OnPlaySoilFX;
     }

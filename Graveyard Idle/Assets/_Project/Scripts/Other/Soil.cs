@@ -69,6 +69,7 @@ namespace GraveyardIdle
             {
                 _playerIsInArea = true;
                 PlayerEvents.OnEnteredDigZone?.Invoke();
+                PlayerEvents.OnPullOutShovel?.Invoke();
             }
         }
 
@@ -78,6 +79,7 @@ namespace GraveyardIdle
             {
                 _playerIsInArea = false;
                 PlayerEvents.OnExitedDigZone?.Invoke();
+                PlayerEvents.OnPutDownShovel?.Invoke();
             }
         }
 
@@ -194,6 +196,8 @@ namespace GraveyardIdle
                         {
                             Debug.Log("GRAVE FINISHED");
                             _interactableGround.OnGraveBuilt?.Invoke();
+                            _interactableGround.Grave.MoneyHandler.StartSpawningMoney();
+                            AudioHandler.PlayAudio(Enums.AudioType.MoneySpawn);
                         }
                     });
             }

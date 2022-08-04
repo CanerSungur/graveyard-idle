@@ -19,7 +19,7 @@ namespace GraveyardIdle
                 //takeCoffinArea.StartOpening();
                 takeCoffinArea.TakeCoffin(_player);
             }
-                
+
 
             if (other.TryGetComponent(out DigArea digArea) && !_player.IsCarryingCoffin)
                 digArea.StartFilling();
@@ -29,13 +29,18 @@ namespace GraveyardIdle
             //    PlayerEvents.OnDropCoffin?.Invoke();
             //    // start drop trigger timer.
             //}
-            if (other.TryGetComponent(out InteractableGround interactableGround) && _player.IsCarryingCoffin && interactableGround.CanBeThrownCoffin)
+            if (other.TryGetComponent(out InteractableGround interactableGround))
             {
-                PlayerEvents.OnDropCoffin?.Invoke(_player.CoffinCarryingNow, interactableGround);
-                interactableGround.HasCoffin = true;
-                interactableGround.CanBeThrownCoffin = false;
-                GraveManagerEvents.OnCoffinThrownToGrave?.Invoke();
-                // start drop trigger timer.
+                _player.EnteredInteractableGround = interactableGround;
+
+                if (_player.IsCarryingCoffin && interactableGround.CanBeThrownCoffin)
+                {
+                    PlayerEvents.OnDropCoffin?.Invoke(_player.CoffinCarryingNow, interactableGround);
+                    interactableGround.HasCoffin = true;
+                    interactableGround.CanBeThrownCoffin = false;
+                    GraveManagerEvents.OnCoffinThrownToGrave?.Invoke();
+                    // start drop trigger timer.
+                }
             }
 
             if (other.TryGetComponent(out InteractableGroundCanvas interactableGroundCanvas) && !interactableGroundCanvas.PlayerIsInArea)
@@ -65,6 +70,9 @@ namespace GraveyardIdle
 
             if (other.TryGetComponent(out DigArea digArea))
                 digArea.StopFilling();
+
+            if (other.TryGetComponent(out InteractableGround interactableGround))
+                _player.EnteredInteractableGround = null;
 
             if (other.TryGetComponent(out InteractableGroundCanvas interactableGroundCanvas) && interactableGroundCanvas.PlayerIsInArea)
                 interactableGroundCanvas.StopOpening();

@@ -49,7 +49,7 @@ namespace GraveyardIdle
         public bool IsInDigZone { get; private set; }
         public bool IsInFillZone { get; private set; }
         public Coffin CoffinCarryingNow { get; private set; }
-        public InteractableGround EnteredInteractableGround { get; private set; }
+        public InteractableGround EnteredInteractableGround { get; set; }
         #endregion
 
         #region GETTERS

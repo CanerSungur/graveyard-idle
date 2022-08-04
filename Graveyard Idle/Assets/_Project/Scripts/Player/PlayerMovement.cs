@@ -14,7 +14,7 @@ namespace GraveyardIdle
         [SerializeField] private LayerMask walkableLayerMask;
         private float _currentSpeed;
         private Vector3 _playerVelocity;
-        private const float GRAVITY_VALUE = -5f;
+        private const float GRAVITY_VALUE = -9f;
         private bool _startedMoving = false;
 
         public bool IsMoving => _player.InputHandler.InputValue != Vector3.zero;

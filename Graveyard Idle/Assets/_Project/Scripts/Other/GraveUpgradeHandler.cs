@@ -17,31 +17,26 @@ namespace GraveyardIdle
         [SerializeField] private Transform moneyImageTransform;
 
         #region PROPERTIES
-        public bool IsActivated { get; private set; }
         public Grave Grave => _grave;
-        public bool MoneyCanBeSpent => DataManager.TotalMoney > 0 && _consumedMoney < _requiredMoney;
+        public bool MoneyCanBeSpent => DataManager.TotalMoney > 0 && _consumedMoney < RequiredMoney;
         public Transform MoneyImageTransform => moneyImageTransform;
-        #endregion
-
-        #region FIRST ACTIVATION
-        private readonly int _coreRequiredMoney = 100;
+        public int RequiredMoney => (int)(_coreUpgradeCost * _grave.Level * 0.5f);
         #endregion
 
         #region UPGRADE
-        private readonly int _coreUpgradeCost = 200;
+        private readonly int _coreUpgradeCost = 50;
         #endregion
 
         private int _consumedMoney;
-        private int _requiredMoney;
 
         public void Init(Grave grave)
         {
             _grave = grave;
-            IsActivated = false;
-            _requiredMoney = _coreUpgradeCost;
-            _consumedMoney = 0;
+
+            LoadData();
+
             UpdateRemainingMoneyText();
-            upgradeArea.SetActive(false);
+            //upgradeArea.SetActive(false);
 
             //_grave.InteractableGround.OnGraveUpgraded += UpdateMoneyRequirements;
         }
@@ -50,18 +45,18 @@ namespace GraveyardIdle
         {
             if (!_grave) return;
             //_grave.InteractableGround.OnGraveUpgraded -= UpdateMoneyRequirements;
+
+            SaveData();
         }
 
-        private void UpdateRemainingMoneyText() => remainingMoneyText.text = (_requiredMoney - _consumedMoney).ToString();
-        private void UpdateMoneyRequirements()
-        {
-            _requiredMoney = (int)(_coreRequiredMoney *_grave.Level * 0.5f);
-            _consumedMoney = 0;
-            UpdateRemainingMoneyText();
-        }
 
         #region PUBLICS
-        public void ActivateUpgradeArea() => upgradeArea.SetActive(true);
+        public void UpdateRemainingMoneyText() => remainingMoneyText.text = (RequiredMoney - _consumedMoney).ToString();
+        public void ActivateUpgradeArea()
+        {
+            upgradeArea.SetActive(true);
+            UpdateRemainingMoneyText();
+        }
         public void DeActivateUpgradeArea() => upgradeArea.SetActive(false);
         public void PlayerStartedUpgrading()
         {
@@ -73,10 +68,18 @@ namespace GraveyardIdle
         }
         public void ConsumeMoney(int amount)
         {
-            if (amount > (_requiredMoney - _consumedMoney))
+            if (amount > (RequiredMoney - _consumedMoney))
             {
-                CollectableEvents.OnConsume?.Invoke(_requiredMoney - _consumedMoney);
-                _consumedMoney = _requiredMoney;
+                if (amount > DataManager.TotalMoney)
+                {
+                    _consumedMoney += DataManager.TotalMoney;
+                    CollectableEvents.OnConsume?.Invoke(DataManager.TotalMoney);
+                }
+                else
+                {
+                    CollectableEvents.OnConsume?.Invoke(RequiredMoney - _consumedMoney);
+                    _consumedMoney = RequiredMoney;
+                }
             }
             else
             {
@@ -94,11 +97,11 @@ namespace GraveyardIdle
 
             UpdateRemainingMoneyText();
 
-            if (_consumedMoney == _requiredMoney)
+            if (_consumedMoney == RequiredMoney)
             {
                 if (!upgradeArea.activeSelf) return;
                 MoneyCanvas.Instance.StopSpendingMoney();
-                //AudioHandler.PlayAudio(Enums.AudioType.PhoneBoothUnlock);
+                AudioHandler.PlayAudio(Enums.AudioType.GraveBuilt);
                 //Activate();
                 Debug.Log("upgrade");
                 _grave.InteractableGround.OnGraveUpgraded?.Invoke();
@@ -108,9 +111,37 @@ namespace GraveyardIdle
                     Delayer.DoActionAfterDelay(this, 3f, () =>
                     {
                         upgradeArea.SetActive(true);
-                        UpdateMoneyRequirements();
+                        _consumedMoney = 0;
+                        UpdateRemainingMoneyText();
                     });
             }
+        }
+        #endregion
+
+        #region SAVE-LOAD
+        private void LoadData()
+        {
+            _consumedMoney = PlayerPrefs.GetInt($"Grave-{_grave.InteractableGround.ID}-ConsumedMoney", 0);
+
+            if (_grave.IsBuilt && _grave.Level < _grave.MaxLevel)
+                ActivateUpgradeArea();
+            else
+                DeActivateUpgradeArea();
+        }
+        private void SaveData()
+        {
+            PlayerPrefs.SetInt($"Grave-{_grave.InteractableGround.ID}-ConsumedMoney", _consumedMoney);
+            PlayerPrefs.Save();
+        }
+        private void OnApplicationQuit()
+        {
+            if (!_grave) return;
+            SaveData();
+        }
+        private void OnApplicationPause(bool pause)
+        {
+            if (!_grave) return;
+            SaveData();
         }
         #endregion
     }

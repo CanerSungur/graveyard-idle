@@ -23,10 +23,10 @@ namespace GraveyardIdle
         }
         #endregion
 
-        public void SpawnCollectMoney()
+        public void SpawnCollectMoney(Transform spawnTransform)
         {
             CollectMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.CollectMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<CollectMoney>();
-            money.Init(this);
+            money.Init(this, spawnTransform);
         }
         public void SpawnSpendMoney(GraveUpgradeHandler graveUpgradeHandler)
         {

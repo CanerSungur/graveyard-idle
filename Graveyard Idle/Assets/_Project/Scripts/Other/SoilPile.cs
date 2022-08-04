@@ -64,6 +64,7 @@ namespace GraveyardIdle
             {
                 _playerIsInArea = true;
                 PlayerEvents.OnEnteredFillZone?.Invoke();
+                PlayerEvents.OnPullOutShovel?.Invoke();
             }
         }
 
@@ -73,11 +74,13 @@ namespace GraveyardIdle
             {
                 _playerIsInArea = false;
                 PlayerEvents.OnExitedFillZone?.Invoke();
+                PlayerEvents.OnPutDownShovel?.Invoke();
             }
         }
 
         private void GetPiled()
         {
+            //if (interactableGround != _interactableGround) return;
             if (!_interactableGround.DiggableSoil.PlayerIsInArea) return;
 
             _currentPileCount++;
