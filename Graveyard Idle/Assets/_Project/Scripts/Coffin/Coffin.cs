@@ -56,7 +56,7 @@ namespace GraveyardIdle
         {
             transform.SetParent(parent);
 
-            StartJumpSequence(position, new Vector3(0f, 180f, 0f), _stackJumpHeight);
+            StartJumpSequence(position, new Vector3(0f, 180f, 0f), _stackJumpHeight, _animationTime);
 
             _stacked = true;
 
@@ -67,7 +67,7 @@ namespace GraveyardIdle
             IsBeingCarried = true;
             transform.SetParent(parent);
 
-            StartJumpSequence(Vector3.zero, new Vector3(14f, 0f, 0f), _stackJumpHeight);
+            StartJumpSequence(Vector3.zero, new Vector3(14f, 0f, 0f), _stackJumpHeight, _animationTime * 0.5f);
 
             CoffinAreaEvents.OnUnStackedCoffin?.Invoke();
             GraveManagerEvents.OnCoffinPickedUp?.Invoke();
@@ -79,7 +79,7 @@ namespace GraveyardIdle
             Rigidbody.isKinematic = false;
             transform.SetParent(null);
 
-            Rigidbody.AddForce(new Vector3(UnityEngine.Random.Range(-3f, 3f), Random.Range(5f, 9f), Random.Range(-3f, 3f)), ForceMode.Impulse);
+            Rigidbody.AddForce(new Vector3(Random.Range(-3f, 3f), Random.Range(5f, 9f), Random.Range(-3f, 3f)), ForceMode.Impulse);
         }
         public void GetThrownToGrave(Transform graveTransform)
         {
@@ -87,7 +87,7 @@ namespace GraveyardIdle
             AnimationController.StopMovement();
             transform.SetParent(graveTransform);
 
-            StartJumpSequence(Vector3.up, Vector3.zero, _graveJumpHeight, () => {
+            StartJumpSequence(Vector3.up, Vector3.zero, _graveJumpHeight, _animationTime, () => {
                 Rigidbody.isKinematic = false;
                 Rigidbody.AddTorque(new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)), ForceMode.VelocityChange);
                 });
@@ -95,14 +95,14 @@ namespace GraveyardIdle
         #endregion
 
         #region DOTWEEN FUNCTIONS
-        private void StartJumpSequence(Vector3 jumpPosition, Vector3 rotation, float jumpHeight, Action action = null)
+        private void StartJumpSequence(Vector3 jumpPosition, Vector3 rotation, float jumpHeight, float animationTime, Action action = null)
         {
             _jumpSequence.Pause();
             DeleteJumpSequence();
-            CreateJumpSequence(jumpPosition, rotation, jumpHeight, action);
+            CreateJumpSequence(jumpPosition, rotation, jumpHeight, animationTime, action);
             _jumpSequence.Play();
         }
-        private void CreateJumpSequence(Vector3 jumpPosition, Vector3 rotation, float jumpHeight, Action action = null)
+        private void CreateJumpSequence(Vector3 jumpPosition, Vector3 rotation, float jumpHeight, float animationTime, Action action = null)
         {
             if (_jumpSequence == null)
             {
@@ -110,7 +110,7 @@ namespace GraveyardIdle
                 _jumpSequenceID = Guid.NewGuid();
                 _jumpSequence.id = _jumpSequenceID;
 
-                _jumpSequence.Append(transform.DOLocalJump(jumpPosition, jumpHeight, 1, _animationTime))
+                _jumpSequence.Append(transform.DOLocalJump(jumpPosition, jumpHeight, 1, animationTime))
                     .Join(transform.DOLocalRotate(rotation, _animationTime))
                     .Join(transform.DOShakeScale(_animationTime, 0.5f))
                     .OnComplete(() => {

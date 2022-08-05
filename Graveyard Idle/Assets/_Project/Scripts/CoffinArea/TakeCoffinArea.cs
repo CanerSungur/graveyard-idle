@@ -11,7 +11,7 @@ namespace GraveyardIdle
         private Image _fillImage;
         private readonly float _openingTime = 2f;
 
-        public bool PlayerIsInArea { get; private set; }
+        public bool PlayerIsInArea { get; set; }
 
         private Sequence _fillSequence, _emptySequence;
         private Guid _fillSequenceID, _emptySequenceID;
@@ -26,20 +26,20 @@ namespace GraveyardIdle
         public void TakeCoffin(Player player)
         {
             PlayerIsInArea = true;
-            if (!GraveManager.CanCoffinBeingCarried)
-            {
-                // trigger there's no grave
-                UiEvents.OnPopupText?.Invoke(player.transform.position + (Vector3.up * 3f), "No Grave");
-                Debug.Log("no grave");
-                return;
-            }
-            else if (CoffinAreaStackHandler.CoffinsInArea.Count <= 0)
-            {
-                // trigger there's no coffin ui
-                UiEvents.OnPopupText?.Invoke(player.transform.position + (Vector3.up * 3f), "No Coffin");
-                Debug.Log("no coffin");
-                return;
-            }
+            //if (!GraveManager.CanCoffinBeingCarried)
+            //{
+            //    // trigger there's no grave
+            //    UiEvents.OnPopupText?.Invoke(player.transform.position + (Vector3.up * 3f), "No Grave");
+            //    Debug.Log("no grave");
+            //    return;
+            //}
+            //else if (CoffinAreaStackHandler.CoffinsInArea.Count <= 0)
+            //{
+            //    // trigger there's no coffin ui
+            //    UiEvents.OnPopupText?.Invoke(player.transform.position + (Vector3.up * 3f), "No Coffin");
+            //    Debug.Log("no coffin");
+            //    return;
+            //}
             PlayerEvents.OnTakeACoffin?.Invoke();
             PlayerIsInArea = false;
         }

@@ -1,8 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
-using DG.Tweening;
-using System;
 using ZestGames;
+using TMPro;
 
 namespace GraveyardIdle
 {
@@ -10,86 +8,93 @@ namespace GraveyardIdle
     {
         private InteractableGround _interactableGround;
 
-        private Image _fillImage;
-        private readonly float _openingTime = 2f;
+        [SerializeField] private TextMeshProUGUI remainingMoneyText;
 
-        public bool PlayerIsInArea { get; private set; }
+        private readonly int _coreActivationMoney = 20;
+        private int _consumedMoney;
 
-        private Sequence _fillSequence, _emptySequence;
-        private Guid _fillSequenceID, _emptySequenceID;
+        public bool PlayerIsInArea { get; set; }
+        public int RequiredMoney => _coreActivationMoney + GraveManager.AvailableGraveCount;
+        public bool MoneyCanBeSpent => DataManager.TotalMoney > 0 && _consumedMoney < RequiredMoney;
 
         public void Init(InteractableGround interactableGround)
         {
             _interactableGround = interactableGround;
-
-            _fillImage = transform.GetChild(0).GetComponent<Image>();
-            _fillImage.fillAmount = 0f;
             PlayerIsInArea = false;
+
+            LoadData();
+            UpdateRemainingMoneyText();
         }
 
-        private void ActivateGrave()
+        private void OnDisable()
         {
-            _interactableGround.ActivateGrave();
+            if (!_interactableGround) return;
+            SaveData();
         }
 
-        #region DOTWEEN FUNCTIONS
-        private void CreateFillSequence()
+        private void UpdateRemainingMoneyText() => remainingMoneyText.text = (RequiredMoney - _consumedMoney).ToString();
+
+        #region PUBLICS
+        public void ConsumeMoney(int amount)
         {
-            if (_fillSequence == null)
+            if (amount > (RequiredMoney - _consumedMoney))
             {
-                _fillSequence = DOTween.Sequence();
-                _fillSequence.Append(DOVirtual.Float(_fillImage.fillAmount, 1f, _openingTime, r =>
+                if (amount > DataManager.TotalMoney)
                 {
-                    _fillImage.fillAmount = r;
-                }).OnComplete(ActivateGrave));
-
-                _fillSequenceID = Guid.NewGuid();
-                _fillSequence.id = _fillSequenceID;
+                    _consumedMoney += DataManager.TotalMoney;
+                    CollectableEvents.OnConsume?.Invoke(DataManager.TotalMoney);
+                }
+                else
+                {
+                    CollectableEvents.OnConsume?.Invoke(RequiredMoney - _consumedMoney);
+                    _consumedMoney = RequiredMoney;
+                }
             }
-        }
-        private void CreateEmptySequence()
-        {
-            if (_emptySequence == null)
+            else
             {
-                _emptySequence = DOTween.Sequence();
-                _emptySequence.Append(DOVirtual.Float(_fillImage.fillAmount, 0f, _openingTime * 0.5f, r => {
-                    _fillImage.fillAmount = r;
-                }));
-
-                _emptySequenceID = Guid.NewGuid();
-                _emptySequence.id = _emptySequenceID;
+                if (amount > DataManager.TotalMoney)
+                {
+                    _consumedMoney += DataManager.TotalMoney;
+                    CollectableEvents.OnConsume?.Invoke(DataManager.TotalMoney);
+                }
+                else
+                {
+                    CollectableEvents.OnConsume?.Invoke(amount);
+                    _consumedMoney += amount;
+                }
             }
-        }
-        private void StopFillSequence()
-        {
-            DOTween.Kill(_fillSequenceID);
-            _fillSequence = null;
-        }
-        private void StopEmptySequence()
-        {
-            DOTween.Kill(_emptySequenceID);
-            _emptySequence = null;
+
+            UpdateRemainingMoneyText();
+
+            if (_consumedMoney == RequiredMoney)
+            {
+                PlayerEvents.OnStopSpendingMoney?.Invoke(this);
+                MoneyCanvas.Instance.StopSpendingMoney();
+                AudioHandler.PlayAudio(Enums.AudioType.GraveBuilt);
+                _interactableGround.ActivateGrave();
+            }
         }
         #endregion
 
-        #region PUBLICS
-        public void StartOpening()
+        #region SAVE-LOAD
+        private void LoadData()
         {
-            PlayerIsInArea = true;
-
-            StopEmptySequence();
-
-            CreateFillSequence();
-            _fillSequence.Play();
+            _consumedMoney = PlayerPrefs.GetInt($"Interactable-{_interactableGround.ID}-Consume", 0);
         }
-        public void StopOpening()
+        private void SaveData()
         {
-            PlayerIsInArea = false;
-
-            StopFillSequence();
-
-            CreateEmptySequence();
-            _emptySequence.Play();
+            PlayerPrefs.SetInt($"Interactable-{_interactableGround.ID}-Consume", _consumedMoney);
+            PlayerPrefs.Save();
+        }
+        private void OnApplicationQuit()
+        {
+            if (!_interactableGround) return;
+            SaveData();
+        }
+        private void OnApplicationPause(bool pause)
+        {
+            if (!_interactableGround) return;
+            SaveData();
         }
         #endregion
     }

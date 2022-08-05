@@ -23,7 +23,6 @@ namespace GraveyardIdle
         private void OnParticleCollision(GameObject other)
         {
             if (_triggered) return;
-            Debug.Log("particle collided");
 
             if (_currentThrowTarget == Enums.SoilThrowTarget.Grave)
                 ShovelEvents.OnThrowSoilToGrave?.Invoke();

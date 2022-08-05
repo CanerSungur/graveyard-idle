@@ -23,10 +23,9 @@ namespace GraveyardIdle
         public SoilPile SoilPile => _soilPile == null ? _soilPile = transform.GetChild(1).GetComponent<SoilPile>() : _soilPile;
         private Grave _grave;
         public Grave Grave => _grave == null ? _grave = transform.GetChild(2).GetComponent<Grave>() : _grave;
+        private InteractableGroundCanvas _interactableGroundCanvas;
+        public InteractableGroundCanvas InteractableGroundCanvas => _interactableGroundCanvas == null ? _interactableGroundCanvas = transform.GetChild(3).GetComponent<InteractableGroundCanvas>() : _interactableGroundCanvas;
         #endregion
-
-        private GameObject _interactableGroundCanvasPrefab;
-        private InteractableGroundCanvas _canvas;
 
         #region PROPERTIES
         public bool GraveIsActivated { get; private set; }
@@ -36,11 +35,15 @@ namespace GraveyardIdle
         public bool CanBeDigged { get; set; }
         public bool CanBeThrownCoffin { get; set; }
         public int ID => _id;
+        public int RequiredMoney => _coreActivationMoney + GraveManager.AvailableGraveCount;
         #endregion
 
         #region EVENTS
         public Action OnGraveBuilt, OnGraveUpgraded;
         #endregion
+
+        private readonly int _coreActivationMoney = 20;
+        private int _currentActivationMoney;
 
         public void Init(ChangeableGraveGround changeableGraveGround, int id)
         {
@@ -50,15 +53,16 @@ namespace GraveyardIdle
             DiggableSoil.gameObject.SetActive(false);
             SoilPile.gameObject.SetActive(false);
             Grave.Init(this);
+            InteractableGroundCanvas.Init(this);
 
             MeshRenderer.enabled = true;
             Collider.enabled = true;
 
-            _interactableGroundCanvasPrefab = changeableGraveGround.InteractableGroundCanvasPrefab;
-            _canvas = Instantiate(_interactableGroundCanvasPrefab, transform.position, Quaternion.identity, transform).GetComponent<InteractableGroundCanvas>();
-            _canvas.transform.localPosition = new Vector3(0f, 0.32f, 0f);
-            _canvas.transform.localRotation = Quaternion.Euler(91f, 180f, 0f);
-            _canvas.Init(this);
+            //_interactableGroundCanvasPrefab = changeableGraveGround.InteractableGroundCanvasPrefab;
+            //_interactableGroundCanvas = Instantiate(_interactableGroundCanvasPrefab, transform.position, Quaternion.identity, transform).GetComponent<InteractableGroundCanvas>();
+            //_interactableGroundCanvas.transform.localPosition = new Vector3(0f, 0.32f, 0f);
+            //_interactableGroundCanvas.transform.localRotation = Quaternion.Euler(91f, 180f, 0f);
+            //_interactableGroundCanvas.Init(this);
 
             if (startActivated)
                 ActivateGrave();
@@ -89,7 +93,7 @@ namespace GraveyardIdle
         {
             MeshRenderer.enabled = false;
             Collider.enabled = false;
-            _canvas.gameObject.SetActive(false);
+            _interactableGroundCanvas.gameObject.SetActive(false);
             DiggableSoil.gameObject.SetActive(true);
             DiggableSoil.Init(this);
             SoilPile.gameObject.SetActive(true);
@@ -115,7 +119,7 @@ namespace GraveyardIdle
 
             if (GraveIsBuilt)
                 HandleGraveBuild();
-            else if (GraveIsBuilt && GraveIsActivated)
+            else if (!GraveIsBuilt && GraveIsActivated)
                 ActivateGrave();
         }
         private void OnApplicationQuit() => SaveData();

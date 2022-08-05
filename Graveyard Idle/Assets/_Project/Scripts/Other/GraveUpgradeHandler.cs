@@ -21,6 +21,7 @@ namespace GraveyardIdle
         public bool MoneyCanBeSpent => DataManager.TotalMoney > 0 && _consumedMoney < RequiredMoney;
         public Transform MoneyImageTransform => moneyImageTransform;
         public int RequiredMoney => (int)(_coreUpgradeCost * _grave.Level * 0.5f);
+        public GameObject UpgradeArea => upgradeArea;
         #endregion
 
         #region UPGRADE

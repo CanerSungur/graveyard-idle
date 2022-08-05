@@ -33,6 +33,11 @@ namespace GraveyardIdle
             SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
             money.Init(this, graveUpgradeHandler);
         }
+        public void SpawnSpendMoney(InteractableGroundCanvas interactableGroundCanvas)
+        {
+            SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
+            money.Init(this, interactableGroundCanvas);
+        }
         //public void SpawnSpendMoney(PhoneBooth phoneBooth)
         //{
         //    SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
@@ -48,6 +53,12 @@ namespace GraveyardIdle
         {
             SpendMoneyEnumIsPlaying = true;
             _spendMoneyEnum = SpendMoney(graveUpgradeHandler);
+            StartCoroutine(_spendMoneyEnum);
+        }
+        public void StartSpendingMoney(InteractableGroundCanvas interactableGroundCanvas)
+        {
+            SpendMoneyEnumIsPlaying = true;
+            _spendMoneyEnum = SpendMoney(interactableGroundCanvas);
             StartCoroutine(_spendMoneyEnum);
         }
         public void StopSpendingMoney()
@@ -68,14 +79,14 @@ namespace GraveyardIdle
                 yield return _waitforSpendMoneyDelay;
             }
         }
-        //private IEnumerator SpendMoney(PhoneBooth phoneBooth)
-        //{
-        //    while (DataManager.TotalMoney > 0)
-        //    {
-        //        SpawnSpendMoney(phoneBooth);
-        //        AudioEvents.OnPlaySpendMoney?.Invoke();
-        //        yield return _waitforSpendMoneyDelay;
-        //    }
-        //}
+        private IEnumerator SpendMoney(InteractableGroundCanvas interactableGroundCanvas)
+        {
+            while (DataManager.TotalMoney > 0)
+            {
+                SpawnSpendMoney(interactableGroundCanvas);
+                AudioEvents.OnPlaySpendMoney?.Invoke();
+                yield return _waitforSpendMoneyDelay;
+            }
+        }
     }
 }

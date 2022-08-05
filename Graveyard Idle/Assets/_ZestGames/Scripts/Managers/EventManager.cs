@@ -18,6 +18,7 @@ namespace ZestGames
         public static Action<Coffin> OnSetCarryingCoffin;
         public static Action OnEnteredDigZone, OnExitedDigZone, OnEnteredFillZone, OnExitedFillZone, OnPutDownShovel, OnPullOutShovel;
         public static Action OnSetCurrentDigSpeed;
+        public static Action<InteractableGroundCanvas> OnStopSpendingMoney;
     }
 
     public static class PlayerUpgradeEvents
