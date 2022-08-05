@@ -18,7 +18,7 @@ namespace ZestGames
         public static Action<Coffin> OnSetCarryingCoffin;
         public static Action OnEnteredDigZone, OnExitedDigZone, OnEnteredFillZone, OnExitedFillZone, OnPutDownShovel, OnPullOutShovel;
         public static Action OnSetCurrentDigSpeed;
-        public static Action<InteractableGroundCanvas> OnStopSpendingMoney;
+        public static Action OnStopSpendingMoney;
     }
 
     public static class PlayerUpgradeEvents
@@ -75,5 +75,10 @@ namespace ZestGames
     public static class AudioEvents
     {
         public static Action OnPlayCollectMoney, OnPlaySpendMoney;
+    }
+
+    public static class CoffinMachineEvents
+    {
+        public static Action OnStartMakingACoffin, OnMadeACoffin, OnACoffinTaken;
     }
 }

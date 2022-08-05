@@ -38,6 +38,11 @@ namespace GraveyardIdle
             SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
             money.Init(this, interactableGroundCanvas);
         }
+        public void SpawnSpendMoney(BuyCoffinArea buyCoffinArea)
+        {
+            SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
+            money.Init(this, buyCoffinArea);
+        }
         //public void SpawnSpendMoney(PhoneBooth phoneBooth)
         //{
         //    SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
@@ -59,6 +64,12 @@ namespace GraveyardIdle
         {
             SpendMoneyEnumIsPlaying = true;
             _spendMoneyEnum = SpendMoney(interactableGroundCanvas);
+            StartCoroutine(_spendMoneyEnum);
+        }
+        public void StartSpendingMoney(BuyCoffinArea buyCoffinArea)
+        {
+            SpendMoneyEnumIsPlaying = true;
+            _spendMoneyEnum = SpendMoney(buyCoffinArea);
             StartCoroutine(_spendMoneyEnum);
         }
         public void StopSpendingMoney()
@@ -84,6 +95,15 @@ namespace GraveyardIdle
             while (DataManager.TotalMoney > 0)
             {
                 SpawnSpendMoney(interactableGroundCanvas);
+                AudioEvents.OnPlaySpendMoney?.Invoke();
+                yield return _waitforSpendMoneyDelay;
+            }
+        }
+        private IEnumerator SpendMoney(BuyCoffinArea buyCoffinArea)
+        {
+            while (DataManager.TotalMoney > 0)
+            {
+                SpawnSpendMoney(buyCoffinArea);
                 AudioEvents.OnPlaySpendMoney?.Invoke();
                 yield return _waitforSpendMoneyDelay;
             }

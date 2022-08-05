@@ -2,7 +2,6 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 using UnityEngine.UI;
-using ZestGames;
 
 namespace GraveyardIdle
 {

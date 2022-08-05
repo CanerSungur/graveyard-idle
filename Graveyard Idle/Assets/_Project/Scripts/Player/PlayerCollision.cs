@@ -17,22 +17,16 @@ namespace GraveyardIdle
             if (other.TryGetComponent(out TakeCoffinArea takeCoffinArea) && !takeCoffinArea.PlayerIsInArea && !_player.IsCarryingCoffin)
             {
                 takeCoffinArea.PlayerIsInArea = true;
-                //takeCoffinArea.StartOpening();
-                //takeCoffinArea.TakeCoffin(_player);
                 if (GraveManager.CanCoffinBeingCarried && CoffinAreaStackHandler.CoffinsInArea.Count > 0)
                     _player.TimerHandler.StartFilling(() => takeCoffinArea.TakeCoffin(_player));
                 else if (CoffinAreaStackHandler.CoffinsInArea.Count <= 0)
                 {
-                    // trigger there's no coffin ui
                     UiEvents.OnPopupText?.Invoke(_player.transform.position + (Vector3.up * 3f), "No Coffin");
-                    Debug.Log("no coffin");
                     return;
                 }
                 else if (!GraveManager.CanCoffinBeingCarried)
                 {
-                    // trigger there's no grave
                     UiEvents.OnPopupText?.Invoke(_player.transform.position + (Vector3.up * 3f), "No Grave");
-                    Debug.Log("no grave");
                     return;
                 }
             }
@@ -40,11 +34,6 @@ namespace GraveyardIdle
             if (other.TryGetComponent(out DigArea digArea) && !_player.IsCarryingCoffin)
                 digArea.StartFilling();
 
-            //if (other.gameObject.layer == LayerMask.NameToLayer("CoffinDropArea") && _player.IsCarryingCoffin)
-            //{
-            //    PlayerEvents.OnDropCoffin?.Invoke();
-            //    // start drop trigger timer.
-            //}
             if (other.TryGetComponent(out InteractableGround interactableGround))
             {
                 _player.EnteredInteractableGround = interactableGround;
@@ -76,18 +65,33 @@ namespace GraveyardIdle
                     _player.MoneyHandler.StartSpending(graveUpgradeHandler);
                 }
             }
+
+            if (other.TryGetComponent(out BuyCoffinArea buyCoffinArea) && !buyCoffinArea.PlayerIsInArea)
+            {
+                buyCoffinArea.PlayerIsInArea = true;
+
+                if (buyCoffinArea.CoffinMachine.TimerHandler.IsMakingCoffin)
+                {
+                    UiEvents.OnPopupText?.Invoke(_player.transform.position + (Vector3.up * 3f), "He's Busy");
+                    return;
+                }
+                else if (!buyCoffinArea.CoffinMachine.CanMakeCoffin)
+                {
+                    UiEvents.OnPopupText?.Invoke(_player.transform.position + (Vector3.up * 3f), "No Space");
+                    return;
+                }
+                else if (buyCoffinArea.CoffinMachine.CanMakeCoffin)
+                {
+                    _player.MoneyHandler.StartSpending(buyCoffinArea);
+                }
+            }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            //if (other.TryGetComponent(out TakeCoffinArea takeCoffinArea) && takeCoffinArea.PlayerIsInArea)
-            //    takeCoffinArea.StopOpening();
-
             if (other.TryGetComponent(out TakeCoffinArea takeCoffinArea) && takeCoffinArea.PlayerIsInArea)
             {
                 takeCoffinArea.PlayerIsInArea = false;
-                //takeCoffinArea.StartOpening();
-                //takeCoffinArea.PlayerExitArea();
                 _player.TimerHandler.StopFilling();
             }
 
@@ -105,7 +109,7 @@ namespace GraveyardIdle
             if (other.TryGetComponent(out InteractableGroundCanvas interactableGroundCanvas) && interactableGroundCanvas.PlayerIsInArea)
             {
                 interactableGroundCanvas.PlayerIsInArea = false;
-                _player.MoneyHandler.StopSpending(interactableGroundCanvas);
+                _player.MoneyHandler.StopSpending();
             }
 
             if (other.gameObject.layer == LayerMask.NameToLayer("GraveUpgradeArea"))
@@ -114,8 +118,14 @@ namespace GraveyardIdle
                 if (graveUpgradeHandler != null && graveUpgradeHandler.Grave.PlayerIsInUpgradeArea)
                 {
                     graveUpgradeHandler.PlayerStoppedUpgrading();
-                    _player.MoneyHandler.StopSpending(graveUpgradeHandler);
+                    _player.MoneyHandler.StopSpending();
                 }
+            }
+
+            if (other.TryGetComponent(out BuyCoffinArea buyCoffinArea) && buyCoffinArea.PlayerIsInArea)
+            {
+                buyCoffinArea.PlayerIsInArea = false;
+                _player.MoneyHandler.StopSpending();
             }
         }
     }

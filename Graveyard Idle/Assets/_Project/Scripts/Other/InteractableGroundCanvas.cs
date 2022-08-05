@@ -68,7 +68,7 @@ namespace GraveyardIdle
 
             if (_consumedMoney == RequiredMoney)
             {
-                PlayerEvents.OnStopSpendingMoney?.Invoke(this);
+                PlayerEvents.OnStopSpendingMoney?.Invoke();
                 MoneyCanvas.Instance.StopSpendingMoney();
                 AudioHandler.PlayAudio(Enums.AudioType.GraveBuilt);
                 _interactableGround.ActivateGrave();

@@ -56,6 +56,16 @@ namespace GraveyardIdle
                 UpdateMoneyValue();
             }
         }
+        private IEnumerator SpendMoney(BuyCoffinArea buyCoffinArea)
+        {
+            while (buyCoffinArea.MoneyCanBeSpent)
+            {
+                buyCoffinArea.ConsumeMoney(_currentMoneySpendValue);
+                yield return new WaitForSeconds(_currentSpendMoneyDelay);
+                //DecreaseMoneyDelay();
+                UpdateMoneyValue();
+            }
+        }
         private void UpdateMoneyValue()
         {
             _moneySpendingCount++;
@@ -79,7 +89,7 @@ namespace GraveyardIdle
             if (graveUpgradeHandler.MoneyCanBeSpent)
                 MoneyCanvas.Instance.StartSpendingMoney(graveUpgradeHandler);
         }
-        public void StopSpending(GraveUpgradeHandler graveUpgradeHandler)
+        public void StopSpending()
         {
             StopCoroutine(_spendMoneyEnum);
 
@@ -98,13 +108,32 @@ namespace GraveyardIdle
             if (interactableGroundCanvas.MoneyCanBeSpent)
                 MoneyCanvas.Instance.StartSpendingMoney(interactableGroundCanvas);
         }
-        public void StopSpending(InteractableGroundCanvas interactableGroundCanvas)
-        {
-            StopCoroutine(_spendMoneyEnum);
+        //public void StopSpending()
+        //{
+        //    StopCoroutine(_spendMoneyEnum);
 
-            // Stop throwing money
-            MoneyCanvas.Instance.StopSpendingMoney();
+        //    // Stop throwing money
+        //    MoneyCanvas.Instance.StopSpendingMoney();
+        //}
+        public void StartSpending(BuyCoffinArea buyCoffinArea)
+        {
+            _spendMoneyEnum = SpendMoney(buyCoffinArea);
+            _currentSpendMoneyDelay = _startingSpendMoneyDelay;
+            _currentMoneySpendValue = DataManager.MoneyValue;
+            _moneySpendingCount = 0;
+            StartCoroutine(_spendMoneyEnum);
+
+            // Start throwing money
+            if (buyCoffinArea.MoneyCanBeSpent)
+                MoneyCanvas.Instance.StartSpendingMoney(buyCoffinArea);
         }
+        //public void StopSpending()
+        //{
+        //    StopCoroutine(_spendMoneyEnum);
+
+        //    // Stop throwing money
+        //    MoneyCanvas.Instance.StopSpendingMoney();
+        //}
         #endregion
     }
 }
