@@ -59,7 +59,7 @@ namespace GraveyardIdle
             if (other.gameObject.layer == LayerMask.NameToLayer("GraveUpgradeArea"))
             {
                 GraveUpgradeHandler graveUpgradeHandler = other.GetComponentInParent<GraveUpgradeHandler>();
-                if (graveUpgradeHandler != null && !graveUpgradeHandler.Grave.PlayerIsInUpgradeArea && _player.MoneyHandler.CanSpendMoney)
+                if (graveUpgradeHandler != null && !graveUpgradeHandler.Grave.PlayerIsInUpgradeArea && !graveUpgradeHandler.Grave.PlayerIsInMaintenanceArea && _player.MoneyHandler.CanSpendMoney)
                 {
                     graveUpgradeHandler.PlayerStartedUpgrading();
                     _player.MoneyHandler.StartSpending(graveUpgradeHandler);
@@ -84,6 +84,14 @@ namespace GraveyardIdle
                 {
                     _player.MoneyHandler.StartSpending(buyCoffinArea);
                 }
+            }
+
+            if (other.TryGetComponent(out Grave grave) && grave.SpoilHandler.CanSpoil && grave.SpoilHandler.CanBeWatered && !grave.PlayerIsInMaintenanceArea && !Player.IsMaintenancing)
+            {
+                PlayerEvents.OnStartedMaintenance?.Invoke();
+                WateringCanEvents.OnStartedWatering?.Invoke();
+                grave.PlayerIsInMaintenanceArea = true;
+                _player.MaintenanceHandler.StartMaintenance(grave);
             }
         }
 
@@ -126,6 +134,14 @@ namespace GraveyardIdle
             {
                 buyCoffinArea.PlayerIsInArea = false;
                 _player.MoneyHandler.StopSpending();
+            }
+
+            if (other.TryGetComponent(out Grave grave) && grave.SpoilHandler.CanSpoil && grave.PlayerIsInMaintenanceArea)
+            {
+                PlayerEvents.OnStoppedMaintenance?.Invoke();
+                WateringCanEvents.OnStoppedWatering?.Invoke();
+                grave.PlayerIsInMaintenanceArea = false;
+                grave.OnStartSpoiling?.Invoke();
             }
         }
     }

@@ -17,7 +17,7 @@ namespace GraveyardIdle
         private readonly int _moneyValueMultiplier = 5;
         #endregion
 
-        public bool CanSpendMoney => !_player.IsCarryingCoffin && !_player.IsInDigZone && !_player.IsInFillZone && DataManager.TotalMoney > 0;
+        public bool CanSpendMoney => !_player.IsCarryingCoffin && !_player.IsInDigZone && !_player.IsInFillZone && !Player.IsMaintenancing && DataManager.TotalMoney > 0;
 
         public void Init(Player player)
         {

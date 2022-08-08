@@ -44,13 +44,13 @@ namespace GraveyardIdle
         public void CanDig()
         {
             ShovelEvents.OnCanDig?.Invoke();
-            if (_player.IsDigging)
+            if (_player.IsDigging && _player.IsInDigZone)
             {
                 ShovelEvents.OnDigHappened?.Invoke();
                 //Delayer.DoActionAfterDelay(this, 1f, () => ShovelEvents.OnThrowSoilToPile?.Invoke());
                 Delayer.DoActionAfterDelay(this, _throwSoilTriggerDelay, () => ShovelEvents.OnPlaySoilFX?.Invoke(Enums.SoilThrowTarget.Pile));
             }
-            else if (_player.IsFilling)
+            else if (_player.IsFilling && _player.IsInFillZone)
             {
                 ShovelEvents.OnFillHappened?.Invoke();
                 //Delayer.DoActionAfterDelay(this, 1f, () => ShovelEvents.OnThrowSoilToGrave?.Invoke());
@@ -85,6 +85,8 @@ namespace GraveyardIdle
         {
             ShovelEvents.OnDisableMesh?.Invoke();
         }
+        public void DiggingInMotion() => _animationController.DiggingInMotion = true;
+        public void DiggingNotInMotion() => _animationController.DiggingInMotion = false;
         #endregion
     }
 }

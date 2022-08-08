@@ -36,12 +36,16 @@ namespace GraveyardIdle
         public PlayerStateController StateController => _stateController == null ? _stateController = GetComponent<PlayerStateController>() : _stateController;
         private Shovel _shovel;
         public Shovel Shovel => _shovel == null ? _shovel = GetComponentInChildren<Shovel>() : _shovel;
+        private WateringCan _wateringCan;
+        public WateringCan WateringCan => _wateringCan == null ? _wateringCan = GetComponentInChildren<WateringCan>() : _wateringCan;
         private PlayerCoffinThrower _coffinThrower;
         public PlayerCoffinThrower CoffinThrower => _coffinThrower == null ? _coffinThrower = GetComponent<PlayerCoffinThrower>() : _coffinThrower;
         private PlayerMoneyHandler _moneyHandler;
         public PlayerMoneyHandler MoneyHandler => _moneyHandler == null ? _moneyHandler = GetComponent<PlayerMoneyHandler>() : _moneyHandler;
         private PlayerTimerHandler _timerHandler;
         public PlayerTimerHandler TimerHandler => _timerHandler == null ? _timerHandler = GetComponent<PlayerTimerHandler>() : _timerHandler;
+        private PlayerMaintenanceHandler _maintenanceHandler;
+        public PlayerMaintenanceHandler MaintenanceHandler => _maintenanceHandler == null ? _maintenanceHandler = GetComponent<PlayerMaintenanceHandler>() : _maintenanceHandler;
         #endregion
 
         #region PROPERTIES
@@ -50,6 +54,7 @@ namespace GraveyardIdle
         public bool IsFilling { get; private set; }
         public bool IsInDigZone { get; private set; }
         public bool IsInFillZone { get; private set; }
+        public static bool IsMaintenancing { get; private set; }
         public Coffin CoffinCarryingNow { get; private set; }
         public InteractableGround EnteredInteractableGround { get; set; }
         #endregion
@@ -60,7 +65,7 @@ namespace GraveyardIdle
 
         private void Start()
         {
-            IsCarryingCoffin = IsDigging = IsFilling = IsInDigZone = IsInFillZone = false;
+            IsCarryingCoffin = IsDigging = IsFilling = IsInDigZone = IsInFillZone = IsMaintenancing = false;
             CoffinCarryingNow = null;
             EnteredInteractableGround = null;
 
@@ -70,9 +75,11 @@ namespace GraveyardIdle
             CollisionHandler.Init(this);
             StateController.Init(this);
             Shovel.Init(this);
+            WateringCan.Init(this);
             CoffinThrower.Init(this);
             MoneyHandler.Init(this);
             TimerHandler.Init(this);
+            MaintenanceHandler.Init(this);
 
             PlayerEvents.OnMove += TakeCoffinFurther;
             PlayerEvents.OnIdle += TakeCoffinCloser;
@@ -87,6 +94,8 @@ namespace GraveyardIdle
             PlayerEvents.OnExitedDigZone += ExitedDigZone;
             PlayerEvents.OnEnteredFillZone += EnteredFillZone;
             PlayerEvents.OnExitedFillZone += ExitedFillZone;
+            PlayerEvents.OnStartedMaintenance += StartMaintenance;
+            PlayerEvents.OnStoppedMaintenance += StopMaintenance;
         }
 
         private void OnDisable()
@@ -104,6 +113,8 @@ namespace GraveyardIdle
             PlayerEvents.OnExitedDigZone -= ExitedDigZone;
             PlayerEvents.OnEnteredFillZone -= EnteredFillZone;
             PlayerEvents.OnExitedFillZone -= ExitedFillZone;
+            PlayerEvents.OnStartedMaintenance -= StartMaintenance;
+            PlayerEvents.OnStoppedMaintenance -= StopMaintenance;
         }
 
         private void EnteredDigZone() => IsInDigZone = true;
@@ -114,6 +125,8 @@ namespace GraveyardIdle
         private void StopDigging() => IsDigging = false;
         private void StartFilling() => IsFilling = true;
         private void StopFilling() => IsFilling = false;
+        private void StartMaintenance() => IsMaintenancing = true;
+        private void StopMaintenance() => IsMaintenancing = false;
 
         #region COFFIN RELATED FUNCTIONS
         private void TakeCoffinFurther()

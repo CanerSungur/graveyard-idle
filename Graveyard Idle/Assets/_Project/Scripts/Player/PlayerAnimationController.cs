@@ -19,16 +19,19 @@ namespace GraveyardIdle
         private readonly int _digSpeedID = Animator.StringToHash("DigSpeed");
         private readonly int _pullOutShovelID = Animator.StringToHash("PullOutShovel");
         private readonly int _putDownShovelID = Animator.StringToHash("PutDownShovel");
+        private readonly int _isWateringID = Animator.StringToHash("IsWatering");
         #endregion
 
         #region GETTERS
         public Animator Animator => _animator;
         public Player Player => _player;
+        public bool DiggingInMotion { get; set; }
         #endregion
 
         public void Init(Player player)
         {
             _player = player;
+            DiggingInMotion = false;
 
             _animator = GetComponentInChildren<Animator>();
             _animationEventHandler = GetComponentInChildren<PlayerAnimationEventHandler>();
@@ -53,6 +56,9 @@ namespace GraveyardIdle
             PlayerEvents.OnPullOutShovel += PullOutShovel;
             PlayerEvents.OnPutDownShovel += PutDownShovel;
 
+            PlayerEvents.OnStartedMaintenance += StartWatering;
+            PlayerEvents.OnStoppedMaintenance += StopWatering;
+
             PlayerEvents.OnSetCurrentDigSpeed += UpdateDigSpeed;
         }
 
@@ -70,6 +76,9 @@ namespace GraveyardIdle
 
             PlayerEvents.OnPullOutShovel -= PullOutShovel;
             PlayerEvents.OnPutDownShovel -= PutDownShovel;
+
+            PlayerEvents.OnStartedMaintenance -= StartWatering;
+            PlayerEvents.OnStoppedMaintenance -= StopWatering;
 
             PlayerEvents.OnSetCurrentDigSpeed -= UpdateDigSpeed;
         }
@@ -94,6 +103,8 @@ namespace GraveyardIdle
         private void PullOutShovel() => _animator.SetTrigger(_pullOutShovelID);
         private void PutDownShovel() => _animator.SetTrigger(_putDownShovelID);
         private void UpdateDigSpeed() => _animator.SetFloat(_digSpeedID, DataManager.DigSpeed);
+        private void StartWatering() => _animator.SetBool(_isWateringID, true);
+        private void StopWatering() => _animator.SetBool(_isWateringID, false);
 
         #region PUBLICS
         public void SetCoffinIK(Coffin coffin)
