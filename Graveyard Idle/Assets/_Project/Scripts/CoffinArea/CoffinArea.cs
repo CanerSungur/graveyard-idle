@@ -19,7 +19,7 @@ namespace GraveyardIdle
 
         #region PROPERTIES
         public Player Player { get; private set; }
-        public bool CanSpawn => CurrentCount < capacity && GameManager.GameState == Enums.GameState.Started && TruckManager.ThereIsAvailableTruck;
+        public bool CanSpawn => GraveManager.CoffinCanBeSpawnedCount > 0 && GameManager.GameState == Enums.GameState.Started && TruckManager.ThereIsAvailableTruck;
         public int CurrentCount { get; private set; }
         public int CurrentRowCount { get; private set; }
         public int CurrentColumnCount { get; private set; }

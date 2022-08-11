@@ -13083,8 +13083,6 @@ MonoBehaviour:
   interactableGroundCanvasPrefab: {fileID: 4863044866714090620, guid: 527a95da0febfad488f228d2f5e40395, type: 3}
   interactableGrounds:
   - {fileID: 6658864079070769262}
-  - {fileID: 1132331175718287326}
-  - {fileID: 9116237194623729642}
   - {fileID: 7075018120760510154}
   - {fileID: 591615862813714621}
   - {fileID: 5473902092033553809}
@@ -24473,6 +24471,14 @@ PrefabInstance:
     - target: {fileID: 1912908246397430396, guid: 8d4caadc05ef6bc4c8d2240719756814, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6305621481137252243, guid: 8d4caadc05ef6bc4c8d2240719756814, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7332949579072024323, guid: 8d4caadc05ef6bc4c8d2240719756814, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.72
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8d4caadc05ef6bc4c8d2240719756814, type: 3}

@@ -133,7 +133,7 @@ namespace ZestGames
         #region SAVE-LOAD
         private void LoadData()
         {
-            TotalMoney = PlayerPrefs.GetInt("TotalMoney", 0);
+            TotalMoney = PlayerPrefs.GetInt("TotalMoney", 100);
             DigSpeedLevel = PlayerPrefs.GetInt("DigSpeedLevel", 1);
             MaintenanceSpeedLevel = PlayerPrefs.GetInt("MaintenanceSpeedLevel", 1);
         }

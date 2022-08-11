@@ -70,12 +70,13 @@ namespace ZestGames
     public static class TruckEvents
     {
         public static Action<CoffinArea> OnEnableTruck;
-        public static Action OnDisableTruck;
+        public static Action<CoffinMachine> OnEnableSellTruck;
+        public static Action OnDisableTruck, OnDisableSellTruck;
     }
 
     public static class GraveManagerEvents
     {
-        public static Action OnGraveActivated, OnGraveDigged, OnCoffinThrownToGrave, OnCoffinPickedUp;
+        public static Action OnGraveActivated, OnGraveDigged, OnCoffinThrownToGrave, OnCoffinPickedUp, OnEmptyCoffinSold, OnCoffinSpawned;
     }
 
     public static class AudioEvents
@@ -85,6 +86,12 @@ namespace ZestGames
 
     public static class CoffinMachineEvents
     {
-        public static Action OnStartMakingACoffin, OnMadeACoffin, OnACoffinTaken;
+        public static Action OnStartMakingACoffin, OnMadeACoffin, OnACoffinTaken, OnStackedEmptyCoffin, OnUnStackedEmptyCoffin;
+        public static Action<SellTruck> OnAssignSellTruck;
+    }
+    
+    public static class CoffinMakerEvents
+    {
+        public static Action OnStartWaiting, OnGoToMachine, OnGoToCounter, OnPushTheButton;
     }
 }

@@ -7,21 +7,27 @@ namespace GraveyardIdle
     {
         [Header("-- TRUCK SETUP --")]
         [SerializeField] private Truck truck;
+        [SerializeField] private SellTruck sellTruck;
 
-        public static bool ThereIsAvailableTruck;
+        public static bool ThereIsAvailableTruck { get; private set; }
+        public static bool ThereIsAvailableSellTruck { get; private set; }
 
         private void Start()
         {
-            ThereIsAvailableTruck = true;
+            ThereIsAvailableTruck = ThereIsAvailableSellTruck = true;
 
             TruckEvents.OnEnableTruck += EnableTruck;
             TruckEvents.OnDisableTruck += DisableTruck;
+            TruckEvents.OnEnableSellTruck += EnableSellTruck;
+            //TruckEvents.OnDisableSellTruck += DisableSellTruck;
         }
 
         private void OnDisable()
         {
             TruckEvents.OnEnableTruck -= EnableTruck;
             TruckEvents.OnDisableTruck -= DisableTruck;
+            TruckEvents.OnEnableSellTruck -= EnableSellTruck;
+            //TruckEvents.OnDisableSellTruck -= DisableSellTruck;
         }
 
         private void EnableTruck(CoffinArea coffinArea)
@@ -35,6 +41,18 @@ namespace GraveyardIdle
         {
             truck.gameObject.SetActive(false);
             ThereIsAvailableTruck = true;
+        }
+        private void EnableSellTruck(CoffinMachine coffinMachine)
+        {
+            ThereIsAvailableSellTruck = false;
+            sellTruck.gameObject.SetActive(true);
+            CoffinMachineEvents.OnAssignSellTruck?.Invoke(sellTruck);
+            sellTruck.Init(coffinMachine);
+        }
+        private void DisableSellTruck()
+        {
+            sellTruck.gameObject.SetActive(false);
+            ThereIsAvailableSellTruck = true;
         }
     }
 }

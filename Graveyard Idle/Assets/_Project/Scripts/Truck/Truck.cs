@@ -29,10 +29,6 @@ namespace GraveyardIdle
         private bool _initialized,_targetReached, _moving, _hasCoffin = false;
         #endregion
 
-        #region PROPERTIES
-
-        #endregion
-
         #region EVENTS
         public Action OnMove, OnIdle, OnDrop, OnTurnAround;
         #endregion
@@ -82,10 +78,6 @@ namespace GraveyardIdle
                 OnIdle?.Invoke();
                 OnDrop?.Invoke();
             }
-        }
-        private void TurnAround()
-        {
-
         }
         private void SpawnCoffin()
         {

@@ -80,6 +80,8 @@ namespace GraveyardIdle
 
             if (_consumedMoney == RequiredMoney)
             {
+                _coffinMachine.ActivateLog();
+
                 // Trigger making coffin timer.
                 _coffinMachine.TimerHandler.StartFilling();
                 _canvasGroup.alpha = 0.5f;

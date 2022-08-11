@@ -22,16 +22,16 @@ namespace GraveyardIdle
         #endregion
 
         #region STACKED COFFINS LIST
-        private static List<Coffin> _emptyCoffinsInArea;
-        public static List<Coffin> EmptyCoffinsInArea => _emptyCoffinsInArea == null ? _emptyCoffinsInArea = new List<Coffin>() : _emptyCoffinsInArea;
-        public static void AddEmptyCoffin(Coffin coffin)
+        private static List<EmptyCoffin> _emptyCoffinsInArea;
+        public static List<EmptyCoffin> EmptyCoffinsInArea => _emptyCoffinsInArea == null ? _emptyCoffinsInArea = new List<EmptyCoffin>() : _emptyCoffinsInArea;
+        public static void AddEmptyCoffin(EmptyCoffin coffin)
         {
             if (!EmptyCoffinsInArea.Contains(coffin))
                 EmptyCoffinsInArea.Add(coffin);
 
             Debug.Log(EmptyCoffinsInArea.Count);
         }
-        public static void RemoveEmptyCoffin(Coffin coffin)
+        public static void RemoveEmptyCoffin(EmptyCoffin coffin)
         {
             if (EmptyCoffinsInArea.Contains(coffin))
                 EmptyCoffinsInArea.Remove(coffin);

@@ -25,7 +25,7 @@ namespace GraveyardIdle
         #region PROPERTIES
         public float CurrentSpoilRate { get; set; }
         public bool CanSpoil => _grave.IsBuilt;
-        public bool CanBeWatered => IsSpoiling && _spoilDelayTimer == 0;
+        public bool CanBeWatered => CurrentSpoilRate < 0.9f;
         public float SpoilSpeed => _coreSpoilSpeed - (_grave.Level * _spoilSpeedDecreaseRate);
         public bool IsSpoiling { get; private set; }
         public float SpoilStartDelay => _coreSpoilStartDelay + (_spoilStartDelayIncrease * _grave.Level);

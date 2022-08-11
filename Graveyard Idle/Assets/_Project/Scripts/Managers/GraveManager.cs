@@ -8,16 +8,19 @@ namespace GraveyardIdle
         public static int DiggedEmptyGraveCount { get; private set; }
         public static int AvailableGraveCount { get; private set; }
         public static int BeingCarriedCoffinCount { get; private set; }
+        public static int CoffinCanBeSpawnedCount { get; private set; }
         public static bool CanCoffinBeingCarried => DiggedEmptyGraveCount - BeingCarriedCoffinCount > 0;
 
         public void Init(GameManager gameManager)
         {
-            AvailableGraveCount = DiggedEmptyGraveCount = BeingCarriedCoffinCount = 0;
+            CoffinCanBeSpawnedCount = AvailableGraveCount = DiggedEmptyGraveCount = BeingCarriedCoffinCount = 0;
 
             GraveManagerEvents.OnGraveActivated += GraveActivated;
             GraveManagerEvents.OnGraveDigged += GraveDigged;
             GraveManagerEvents.OnCoffinThrownToGrave += CoffinThrownToGrave;
             GraveManagerEvents.OnCoffinPickedUp += StartedCarryingCoffin;
+            GraveManagerEvents.OnEmptyCoffinSold += EmptyCoffinSold;
+            GraveManagerEvents.OnCoffinSpawned += CoffinSpawned;
         }
 
         private void OnDisable()
@@ -26,6 +29,8 @@ namespace GraveyardIdle
             GraveManagerEvents.OnGraveDigged -= GraveDigged;
             GraveManagerEvents.OnCoffinThrownToGrave -= CoffinThrownToGrave;
             GraveManagerEvents.OnCoffinPickedUp -= StartedCarryingCoffin;
+            GraveManagerEvents.OnEmptyCoffinSold -= EmptyCoffinSold;
+            GraveManagerEvents.OnCoffinSpawned -= CoffinSpawned;
         }
 
         private void GraveActivated()
@@ -49,6 +54,16 @@ namespace GraveyardIdle
         {
             BeingCarriedCoffinCount++;
             Debug.Log("coffins that are being carried: " + BeingCarriedCoffinCount);
+        }
+        private void EmptyCoffinSold()
+        {
+            CoffinCanBeSpawnedCount++;
+            Debug.Log("coffin can be spawned count: " + CoffinCanBeSpawnedCount);
+        }
+        private void CoffinSpawned()
+        {
+            CoffinCanBeSpawnedCount--;
+            Debug.Log("coffin can be spawned count: " + CoffinCanBeSpawnedCount);
         }
     }
 }

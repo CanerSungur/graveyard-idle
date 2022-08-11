@@ -1,21 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GraveyardIdle
 {
     public class CoffinMaker : MonoBehaviour
     {
-        // Start is called before the first frame update
-        void Start()
-        {
-        
-        }
+        #region SCRIPT REFERENCES
+        private CoffinMakerAnimationController _animationController;
+        public CoffinMakerAnimationController AnimationController => _animationController == null ? _animationController = GetComponent<CoffinMakerAnimationController>() : _animationController;
+        private CoffinMakerMovement _coffinMakerMovement;
+        public CoffinMakerMovement CoffinMakerMovement => _coffinMakerMovement == null ? _coffinMakerMovement = GetComponent<CoffinMakerMovement>() : _coffinMakerMovement;
+        #endregion
 
-        // Update is called once per frame
-        void Update()
+        private void Awake()
         {
-        
+            CoffinMakerMovement.Init(this);
+            AnimationController.Init(this);
         }
     }
 }

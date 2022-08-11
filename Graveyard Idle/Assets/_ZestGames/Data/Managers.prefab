@@ -135,6 +135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   truck: {fileID: 0}
+  sellTruck: {fileID: 0}
 --- !u!114 &3048080267234432275
 MonoBehaviour:
   m_ObjectHideFlags: 0

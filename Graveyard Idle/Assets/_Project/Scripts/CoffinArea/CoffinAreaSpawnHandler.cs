@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using ZestGames;
@@ -44,7 +43,7 @@ namespace GraveyardIdle
                 if (_coffinArea.CanSpawn)
                 {
                     TruckEvents.OnEnableTruck?.Invoke(_coffinArea);
-
+                    GraveManagerEvents.OnCoffinSpawned?.Invoke();
                     //Coffin coffin = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.Coffin, spawnTransform.position, Quaternion.Euler(0f, 90f, 0f)).GetComponent<Coffin>();
                     //coffin.Init(this);
                     //coffin.GetStacked(_coffinArea.StackHandler.TargetStackPosition, _coffinArea.StackHandler.StackContainer);
