@@ -80,6 +80,9 @@ namespace GraveyardIdle
         private void LoadData()
         {
             _consumedMoney = PlayerPrefs.GetInt($"Interactable-{_interactableGround.ID}-Consume", 0);
+
+            if (RequiredMoney - _consumedMoney <= 0)
+                _interactableGround.ActivateGrave();
         }
         private void SaveData()
         {

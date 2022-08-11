@@ -10,7 +10,7 @@ namespace GraveyardIdle
 
         private readonly WaitForSeconds _waitForNormalRewardDelay = new WaitForSeconds(1f);
         private readonly WaitForSeconds _waitForSuccessRewardDelay = new WaitForSeconds(0.05f);
-        private IEnumerator _rewardCoroutine;
+        private IEnumerator _wateringRewardCoroutine;
 
         private readonly int _maintenanceRewardMoney = 10;
 
@@ -34,30 +34,30 @@ namespace GraveyardIdle
 
         private void StartRewarding()
         {
-            _rewardCoroutine = RewardCoroutine();
-            StartCoroutine(_rewardCoroutine);
+            _wateringRewardCoroutine = WateringRewardCoroutine();
+            StartCoroutine(_wateringRewardCoroutine);
         }
         private void StopRewarding()
         {
-            StopCoroutine(_rewardCoroutine);
+            StopCoroutine(_wateringRewardCoroutine);
         }
         private void MaintenanceSuccessfull(Grave grave)
         {
             StopRewarding();
             // reward total money;
-            StartCoroutine(SpawnRewardMoney());
+            StartCoroutine(SpawnWateringFinishedRewardMoney());
         }
 
         #region COROUTINE
-        private IEnumerator RewardCoroutine()
+        private IEnumerator WateringRewardCoroutine()
         {
             while (true)
             {
-                MoneyCanvas.Instance.SpawnCollectMoney(transform);
                 yield return _waitForNormalRewardDelay;
+                MoneyCanvas.Instance.SpawnCollectMoney(transform);
             }
         }
-        private IEnumerator SpawnRewardMoney()
+        private IEnumerator SpawnWateringFinishedRewardMoney()
         {
             int currentCount = 0;
             while (currentCount < _maintenanceRewardMoney)

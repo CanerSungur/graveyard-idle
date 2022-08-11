@@ -74,8 +74,8 @@ namespace GraveyardIdle
             EnableGravePiece(_level);
             UpgradeHandler.ActivateUpgradeArea();
 
-            if (!SpoilHandler.IsSpoiling)
-                OnStartSpoiling?.Invoke();
+            //if (!SpoilHandler.IsSpoiling)
+            //    OnStartSpoiling?.Invoke();
         }
         private void Upgrade()
         {

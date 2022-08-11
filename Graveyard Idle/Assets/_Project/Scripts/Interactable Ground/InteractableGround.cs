@@ -49,14 +49,14 @@ namespace GraveyardIdle
         {
             _id = id;
             GraveIsActivated = GraveIsBuilt = HasCoffin = CanBeDigged = CanBeThrownCoffin = false;
+            
+            MeshRenderer.enabled = true;
+            Collider.enabled = true;
 
             DiggableSoil.gameObject.SetActive(false);
             SoilPile.gameObject.SetActive(false);
             Grave.Init(this);
             InteractableGroundCanvas.Init(this);
-
-            MeshRenderer.enabled = true;
-            Collider.enabled = true;
 
             //_interactableGroundCanvasPrefab = changeableGraveGround.InteractableGroundCanvasPrefab;
             //_interactableGroundCanvas = Instantiate(_interactableGroundCanvasPrefab, transform.position, Quaternion.identity, transform).GetComponent<InteractableGroundCanvas>();

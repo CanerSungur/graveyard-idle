@@ -86,7 +86,7 @@ namespace GraveyardIdle
                 }
             }
 
-            if (other.TryGetComponent(out Grave grave) && grave.SpoilHandler.CanSpoil && grave.SpoilHandler.CanBeWatered && !grave.PlayerIsInMaintenanceArea && !Player.IsMaintenancing)
+            if (other.TryGetComponent(out Grave grave) && grave.SpoilHandler.IsSpoiling && !grave.PlayerIsInMaintenanceArea && !Player.IsMaintenancing)
             {
                 PlayerEvents.OnStartedMaintenance?.Invoke();
                 WateringCanEvents.OnStartedWatering?.Invoke();
@@ -141,7 +141,7 @@ namespace GraveyardIdle
                 PlayerEvents.OnStoppedMaintenance?.Invoke();
                 WateringCanEvents.OnStoppedWatering?.Invoke();
                 grave.PlayerIsInMaintenanceArea = false;
-                grave.OnStartSpoiling?.Invoke();
+                //grave.OnStartSpoiling?.Invoke();
             }
         }
     }
