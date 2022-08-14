@@ -34,7 +34,6 @@ namespace GraveyardIdle
         #region PUBLICS
         public void StartFilling()
         {
-            Debug.Log("start making coffin");
             IsMakingCoffin = true;
             fillImage.fillAmount = 0;
             timerCanvas.gameObject.SetActive(true);

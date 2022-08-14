@@ -27,7 +27,7 @@ namespace GraveyardIdle
         #region PILED VALUES
         private int _pileCount = 5;
         private int _currentPileCount = 0;
-        private readonly float _getPiledDuration = 1f;
+        private readonly float _getPiledDuration = 0.5f;
         #endregion
 
         #region SEQUENCE

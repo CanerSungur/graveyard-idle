@@ -22,17 +22,22 @@ namespace GraveyardIdle
         [SerializeField] private GravePiece[] gravePieces;
         private Dictionary<int, GravePiece> gravePiecesDict = new Dictionary<int, GravePiece>();
 
+        [Header("-- CARRIER DROP SETUP --")]
+        [SerializeField] private Transform carrierDropPoint;
+
         private readonly int _maxLevel = 5;
         private int _level = 0;
         private bool _isBuilt = false;
 
         #region PROPERTIES
+        public bool CarriersAssigned { get; set; }
         public bool IsBuilt => _isBuilt;
         public bool PlayerIsInUpgradeArea { get; set; }
         public bool PlayerIsInMaintenanceArea { get; set; }
         public int Level => _level;
         public int MaxLevel => _maxLevel;
         public InteractableGround InteractableGround => _interactableGround;
+        public Transform CarrierDropPoint => carrierDropPoint;
         #endregion
 
         #region EVENTS
@@ -42,7 +47,7 @@ namespace GraveyardIdle
         public void Init(InteractableGround interactableGround)
         {
             _interactableGround = interactableGround;
-            PlayerIsInUpgradeArea = PlayerIsInMaintenanceArea = false;
+            PlayerIsInUpgradeArea = PlayerIsInMaintenanceArea = CarriersAssigned = false;
             InitializeGravePiecesDictionary();
 
             LoadData();

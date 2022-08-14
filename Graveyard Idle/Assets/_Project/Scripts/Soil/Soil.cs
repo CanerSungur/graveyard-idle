@@ -118,6 +118,8 @@ namespace GraveyardIdle
                 _interactableGround.CanBeThrownCoffin = true;
 
                 GraveManagerEvents.OnGraveDigged?.Invoke();
+                GraveManager.AddEmptyGrave(_interactableGround.Grave);
+                GraveManagerEvents.OnCheckForCarrierActivation?.Invoke();
             }
         }
         private void UpdateMeshCollider()

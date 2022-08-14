@@ -16,6 +16,7 @@ namespace ZestGames
         private DataManager _dataManager;
         private GraveManager _graveManager;
         private PopupManager _popupManager;
+        private CoffinCarrierManager _coffinCarrierManager;
 
         private void Init()
         {
@@ -34,6 +35,8 @@ namespace ZestGames
             _graveManager.Init(this);
             _popupManager = GetComponent<PopupManager>();
             _popupManager.Init(this);
+            _coffinCarrierManager = GetComponent<CoffinCarrierManager>();
+            _coffinCarrierManager.Init(this);
 
             UiEvents.OnUpdateCollectableText?.Invoke(DataManager.TotalMoney);
             UiEvents.OnUpdateLevelText?.Invoke(LevelHandler.Level);

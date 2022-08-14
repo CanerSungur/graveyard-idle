@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using ZestGames;
 
 namespace GraveyardIdle
 {
@@ -27,7 +28,10 @@ namespace GraveyardIdle
         public static void AddCoffin(Coffin coffin)
         {
             if (!CoffinsInArea.Contains(coffin))
+            {
                 CoffinsInArea.Add(coffin);
+                GraveManagerEvents.OnCheckForCarrierActivation?.Invoke();
+            }
 
             Debug.Log(CoffinsInArea.Count);
         }

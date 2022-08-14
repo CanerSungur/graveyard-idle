@@ -16,6 +16,8 @@ namespace GraveyardIdle
 
         [Header("-- SETUP --")]
         [SerializeField] private int capacity = 10;
+        [SerializeField] private Transform coffinThrowPointForCarriers;
+        [SerializeField] private Transform[] carrierTakeTransforms;
 
         #region PROPERTIES
         public Player Player { get; private set; }
@@ -28,9 +30,14 @@ namespace GraveyardIdle
         public int ColumnLength { get; private set; }
         #endregion
 
+        public static Transform[] CarrierTakeTransforms;
+        public static Transform CoffinThrowPointForCarriers;
+
         private void Start()
         {
             Player = FindObjectOfType<Player>();
+            CarrierTakeTransforms = carrierTakeTransforms;
+            CoffinThrowPointForCarriers = coffinThrowPointForCarriers;
 
             CurrentCount = CurrentRowCount = CurrentColumnCount = CurrentHeightCount = 0;
             RowLength = 4;

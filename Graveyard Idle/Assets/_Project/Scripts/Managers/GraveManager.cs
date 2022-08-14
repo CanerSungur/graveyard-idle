@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using ZestGames;
 
@@ -10,6 +11,21 @@ namespace GraveyardIdle
         public static int BeingCarriedCoffinCount { get; private set; }
         public static int CoffinCanBeSpawnedCount { get; private set; }
         public static bool CanCoffinBeingCarried => DiggedEmptyGraveCount - BeingCarriedCoffinCount > 0;
+
+        #region EMPTY GRAVE SECTION
+        private static List<Grave> _emptyGraves;
+        public static List<Grave> EmptyGraves => _emptyGraves == null ? _emptyGraves = new List<Grave>() : _emptyGraves;
+        public static void AddEmptyGrave(Grave grave)
+        {
+            if (!EmptyGraves.Contains(grave))
+                EmptyGraves.Add(grave);
+        }
+        public static void RemoveEmptyGrave(Grave grave)
+        {
+            if (EmptyGraves.Contains(grave))
+                EmptyGraves.Remove(grave);
+        }
+        #endregion
 
         public void Init(GameManager gameManager)
         {

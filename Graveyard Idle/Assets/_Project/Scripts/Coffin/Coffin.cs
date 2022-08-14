@@ -12,6 +12,9 @@ namespace GraveyardIdle
         [SerializeField] private Transform rightHandObjectIK;
         [SerializeField] private Transform leftHandObjectIK;
 
+        [Header("-- HANDLES FOR CARRIERS --")]
+        [SerializeField] private CarrierHandle[] carrierHandles;
+
         #region STACK DATA
         private bool _stacked = false;
         private readonly float _stackJumpHeight = 4f;
@@ -29,6 +32,8 @@ namespace GraveyardIdle
         #region SCRIPT REFERENCES
         private CoffinAnimationController _animationController;
         public CoffinAnimationController AnimationController => _animationController == null ? _animationController = GetComponent<CoffinAnimationController>() : _animationController;
+        private CoffinMovement _movementHandler;
+        public CoffinMovement MovementHandler => _movementHandler == null ? _movementHandler = GetComponent<CoffinMovement>() : _movementHandler;
         #endregion
 
         #region PROPERTIES
@@ -36,6 +41,7 @@ namespace GraveyardIdle
         public bool CanBeCarried => _stacked;
         public Transform RightHandObjectIK => rightHandObjectIK;
         public Transform LeftHandObjectIK => leftHandObjectIK;
+        public CarrierHandle[] CarrierHandles => carrierHandles;
         #endregion
 
         #region SEQUENCE
@@ -43,13 +49,28 @@ namespace GraveyardIdle
         private Guid _jumpSequenceID;
         #endregion
 
+        #region EVENTS
+        public Action OnMoveToAssignedGrave;
+        #endregion
+
         public void Init(Truck truck)
         {
             IsBeingCarried = false;
             Rigidbody.isKinematic = true;
 
+            MovementHandler.Init(this);
             AnimationController.Init(this);
+
+            InitCarrierHandles();
         }
+
+        #region CARRIER HANDLE FUNCTIONS
+        private void InitCarrierHandles()
+        {
+            for (int i = 0; i < carrierHandles.Length; i++)
+                carrierHandles[i].Init(this);
+        }
+        #endregion
 
         #region PUBLICS
         public void GetStacked(Vector3 position, Transform parent)
@@ -87,10 +108,31 @@ namespace GraveyardIdle
             AnimationController.StopMovement();
             transform.SetParent(graveTransform);
 
-            StartJumpSequence(Vector3.up, Vector3.zero, _graveJumpHeight, _animationTime, () => {
+            StartJumpSequence(Vector3.up, Vector3.zero, _graveJumpHeight * 0.5f, _animationTime, () => {
                 Rigidbody.isKinematic = false;
                 Rigidbody.AddTorque(new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)), ForceMode.VelocityChange);
                 });
+        }
+        public void GetThrownToCarriers()
+        {
+            transform.SetParent(null);
+
+            StartJumpSequence(CoffinArea.CoffinThrowPointForCarriers.position + (Vector3.up * 0.8f), Vector3.zero, _stackJumpHeight, _animationTime, () => {
+                CoffinCarrierEvents.OnSendCarriersToHandles?.Invoke(this);
+            });
+
+            CoffinAreaEvents.OnUnStackedCoffin?.Invoke();
+        }
+        public void GetThrownToGraveByCarriers(Transform graveTransform)
+        {
+            IsBeingCarried = false;
+            AnimationController.StopMovement();
+            transform.SetParent(graveTransform);
+
+            StartJumpSequence(Vector3.up, new Vector3(0f, 180f, 0f), _graveJumpHeight * 0.25f, _animationTime, () => {
+                Rigidbody.isKinematic = false;
+                Rigidbody.AddTorque(new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)), ForceMode.VelocityChange);
+            });
         }
         #endregion
 

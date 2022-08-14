@@ -38,13 +38,14 @@ namespace GraveyardIdle
             {
                 _player.EnteredInteractableGround = interactableGround;
 
-                if (_player.IsCarryingCoffin && interactableGround.CanBeThrownCoffin)
+                if (_player.IsCarryingCoffin && interactableGround.CanBeThrownCoffin && !interactableGround.Grave.CarriersAssigned)
                 {
                     _player.TimerHandler.StartFilling(() => {
                         PlayerEvents.OnDropCoffin?.Invoke(_player.CoffinCarryingNow, interactableGround);
                         interactableGround.HasCoffin = true;
                         interactableGround.CanBeThrownCoffin = false;
                         GraveManagerEvents.OnCoffinThrownToGrave?.Invoke();
+                        GraveManager.RemoveEmptyGrave(interactableGround.Grave);
                     });
                 }
             }
@@ -86,7 +87,7 @@ namespace GraveyardIdle
                 }
             }
 
-            if (other.TryGetComponent(out Grave grave) && grave.SpoilHandler.IsSpoiling && !grave.PlayerIsInMaintenanceArea && !Player.IsMaintenancing)
+            if (other.TryGetComponent(out Grave grave) && grave.SpoilHandler.IsSpoiling && !grave.PlayerIsInMaintenanceArea && !Player.IsMaintenancing && !_player.IsCarryingCoffin)
             {
                 PlayerEvents.OnStartedMaintenance?.Invoke();
                 WateringCanEvents.OnStartedWatering?.Invoke();
