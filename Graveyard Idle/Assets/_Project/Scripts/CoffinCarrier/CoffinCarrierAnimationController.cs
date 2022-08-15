@@ -9,10 +9,12 @@ namespace GraveyardIdle
         private Animator _animator;
 
         #region ANIMATION VARIABLES
+        private readonly int _waitForDutyID = Animator.StringToHash("WaitForDuty");
         private readonly int _moveID = Animator.StringToHash("Move");
         private readonly int _carryID = Animator.StringToHash("Carry");
         private readonly int _throwID = Animator.StringToHash("Throw");
         private readonly int _sideIndexID = Animator.StringToHash("SideIndex");
+        private readonly int _waitForDutyIndexID = Animator.StringToHash("WaitForDutyIndex");
 
         private readonly int _leftSideIndex = 1;
         private readonly int _rightSideIndex = 2;
@@ -28,12 +30,14 @@ namespace GraveyardIdle
             }
 
             _animator.SetLayerWeight(_carryLayer, 1f);
+            _animator.SetInteger(_waitForDutyIndexID, _coffinCarrier.Number);
             SetSideIndex();
+            WaitForDuty();
 
             _coffinCarrier.OnMove += Move;
             _coffinCarrier.OnIdle += Idle;
-            _coffinCarrier.OnThrow += Throw;
             _coffinCarrier.OnTakeCoffin += StartCarrying;
+            _coffinCarrier.OnWaitForDuty += WaitForDuty;
             CoffinCarrierEvents.OnLeaveCoffin += Throw;
         }
 
@@ -43,11 +47,15 @@ namespace GraveyardIdle
 
             _coffinCarrier.OnMove -= Move;
             _coffinCarrier.OnIdle -= Idle;
-            _coffinCarrier.OnThrow -= Throw;
             _coffinCarrier.OnTakeCoffin -= StartCarrying;
+            _coffinCarrier.OnWaitForDuty -= WaitForDuty;
             CoffinCarrierEvents.OnLeaveCoffin -= Throw;
         }
 
+        private void WaitForDuty()
+        {
+            _animator.SetBool(_waitForDutyID, true);
+        }
         private void SetSideIndex()
         {
             if (_coffinCarrier.Number == 0 || _coffinCarrier.Number == 1)
@@ -58,21 +66,25 @@ namespace GraveyardIdle
         private void Move()
         {
             _animator.SetBool(_moveID, true);
+            _animator.SetBool(_waitForDutyID, false);
         }
         private void Idle()
         {
             _animator.SetBool(_moveID, false);
+            _animator.SetBool(_waitForDutyID, false);
         }
         private void StartCarrying()
         {
             _animator.SetLayerWeight(_carryLayer, 1f);
             _animator.SetBool(_carryID, true);
+            _animator.SetBool(_waitForDutyID, false);
         }
         private void Throw()
         {
             _animator.SetLayerWeight(_carryLayer, 0f);
             _animator.SetBool(_carryID, false);
             _animator.SetTrigger(_throwID);
+            _animator.SetBool(_waitForDutyID, false);
         }
     }
 }

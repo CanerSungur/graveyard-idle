@@ -66,6 +66,16 @@ namespace GraveyardIdle
                 UpdateMoneyValue();
             }
         }
+        private IEnumerator SpendMoney(CoffinCarriersUnlocker coffinCarriersUnlocker)
+        {
+            while (coffinCarriersUnlocker.MoneyCanBeSpent)
+            {
+                coffinCarriersUnlocker.ConsumeMoney(_currentMoneySpendValue);
+                yield return new WaitForSeconds(_currentSpendMoneyDelay);
+                //DecreaseMoneyDelay();
+                UpdateMoneyValue();
+            }
+        }
         private void UpdateMoneyValue()
         {
             _moneySpendingCount++;
@@ -134,6 +144,18 @@ namespace GraveyardIdle
         //    // Stop throwing money
         //    MoneyCanvas.Instance.StopSpendingMoney();
         //}
+        public void StartSpending(CoffinCarriersUnlocker coffinCarriersUnlocker)
+        {
+            _spendMoneyEnum = SpendMoney(coffinCarriersUnlocker);
+            _currentSpendMoneyDelay = _startingSpendMoneyDelay;
+            _currentMoneySpendValue = DataManager.MoneyValue;
+            _moneySpendingCount = 0;
+            StartCoroutine(_spendMoneyEnum);
+
+            // Start throwing money
+            if (coffinCarriersUnlocker.MoneyCanBeSpent)
+                MoneyCanvas.Instance.StartSpendingMoney(coffinCarriersUnlocker);
+        }
         #endregion
     }
 }

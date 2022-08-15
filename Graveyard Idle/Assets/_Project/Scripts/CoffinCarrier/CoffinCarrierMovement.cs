@@ -104,16 +104,17 @@ namespace GraveyardIdle
                 if (Operation.IsTargetReached(transform, CoffinCarrierManager.WaitTransforms[_coffinCarrier.Number].transform.position, 0.15f))
                 {
                     _targetReached = true;
-                    _coffinCarrier.OnIdle?.Invoke();
                     CoffinCarrierEvents.OnReadyForDuty?.Invoke();
-                    transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+                    _coffinCarrier.OnWaitForDuty?.Invoke();
+                    transform.rotation = Quaternion.Euler(0f, -144f, 0f);
+                    transform.position = CoffinCarrierManager.WaitTransforms[_coffinCarrier.Number].transform.position;
                     //if (!CoffinCarrierManager.CoffinThrowTriggered)
                     //{
                     //    CoffinCarrierManager.CoffinThrowTriggered = true;
 
                     //    Delayer.DoActionAfterDelay(this, _delay, () => {
                     //        // make carriers not busy again.
-                            
+
                     //    });
                     //}
                 }

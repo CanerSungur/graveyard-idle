@@ -57,6 +57,12 @@ namespace GraveyardIdle
 
             }
 
+            if (other.TryGetComponent(out CoffinCarriersUnlocker coffinCarrierUnlocker) && !coffinCarrierUnlocker.PlayerIsInArea && _player.MoneyHandler.CanSpendMoney)
+            {
+                coffinCarrierUnlocker.PlayerIsInArea = true;
+                _player.MoneyHandler.StartSpending(coffinCarrierUnlocker);
+            }
+
             if (other.gameObject.layer == LayerMask.NameToLayer("GraveUpgradeArea"))
             {
                 GraveUpgradeHandler graveUpgradeHandler = other.GetComponentInParent<GraveUpgradeHandler>();
@@ -118,6 +124,12 @@ namespace GraveyardIdle
             if (other.TryGetComponent(out InteractableGroundCanvas interactableGroundCanvas) && interactableGroundCanvas.PlayerIsInArea)
             {
                 interactableGroundCanvas.PlayerIsInArea = false;
+                _player.MoneyHandler.StopSpending();
+            }
+
+            if (other.TryGetComponent(out CoffinCarriersUnlocker coffinCarriersUnlocker) && coffinCarriersUnlocker.PlayerIsInArea)
+            {
+                coffinCarriersUnlocker.PlayerIsInArea = false;
                 _player.MoneyHandler.StopSpending();
             }
 

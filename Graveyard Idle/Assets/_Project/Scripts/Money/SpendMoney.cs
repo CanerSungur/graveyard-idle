@@ -13,6 +13,7 @@ namespace GraveyardIdle
         private InteractableGroundCanvas _interactableGroundCanvas = null;
         private GraveUpgradeHandler _graveUpgradeHandler = null;
         private BuyCoffinArea _buyCoffinArea = null;
+        private CoffinCarriersUnlocker _coffinCarriersUnlocker = null;
         private float _disableTime;
 
         public void Init(MoneyCanvas moneyCanvas, InteractableGroundCanvas interactableGroundCanvas)
@@ -57,6 +58,21 @@ namespace GraveyardIdle
             }
 
             _buyCoffinArea = buyCoffinArea;
+            _disableTime = Time.time + 0.9f;
+            _currentPosition = Hud.MoneyAnchoredPosition;
+            _rectTransform.anchoredPosition = _currentPosition;
+        }
+        public void Init(MoneyCanvas moneyCanvas, CoffinCarriersUnlocker coffinCarriersUnlocker)
+        {
+            if (!_moneyCanvas)
+            {
+                _moneyCanvas = moneyCanvas;
+                _canvasRect = _moneyCanvas.GetComponent<RectTransform>();
+                _rectTransform = GetComponent<RectTransform>();
+                _camera = Camera.main;
+            }
+
+            _coffinCarriersUnlocker = coffinCarriersUnlocker;
             _disableTime = Time.time + 0.9f;
             _currentPosition = Hud.MoneyAnchoredPosition;
             _rectTransform.anchoredPosition = _currentPosition;
@@ -106,6 +122,21 @@ namespace GraveyardIdle
 
 
                 if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_graveUpgradeHandler.UpgradeArea.transform)) < 25f)
+                {
+                    gameObject.SetActive(false);
+                }
+
+                if (Time.time >= _disableTime)
+                    gameObject.SetActive(false);
+            }
+
+            if (_coffinCarriersUnlocker)
+            {
+                Vector2 travel = GetWorldPointToScreenPoint(_coffinCarriersUnlocker.transform) - _rectTransform.anchoredPosition;
+                _rectTransform.Translate(travel * 10f * Time.deltaTime, _camera.transform);
+
+
+                if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_coffinCarriersUnlocker.transform)) < 25f)
                 {
                     gameObject.SetActive(false);
                 }

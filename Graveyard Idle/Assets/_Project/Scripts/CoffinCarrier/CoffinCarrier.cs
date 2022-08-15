@@ -19,15 +19,13 @@ namespace GraveyardIdle
         #endregion
 
         #region EVENTS
-        public Action OnMoveToCoffinArea, OnMove, OnIdle, OnThrow, OnTakeCoffin;
+        public Action OnMoveToCoffinArea, OnMove, OnIdle, OnTakeCoffin, OnWaitForDuty;
         #endregion
 
-        private void Start()
+        private void OnEnable()
         {
             MovementHandler.Init(this);
             AnimationController.Init(this);
-
-            OnIdle?.Invoke();
 
             CoffinCarrierEvents.OnLeaveCoffin += HandleLeaveCoffin;
         }

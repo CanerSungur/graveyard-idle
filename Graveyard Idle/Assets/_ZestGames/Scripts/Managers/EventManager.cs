@@ -98,6 +98,6 @@ namespace ZestGames
     public static class CoffinCarrierEvents
     {
         public static Action<Coffin> OnSendCarriersToHandles;
-        public static Action OnLeaveCoffin, OnReturnToWaitingPosition, OnReadyForDuty;
+        public static Action OnLeaveCoffin, OnReturnToWaitingPosition, OnReadyForDuty, OnActivatedCarriers;
     }
 }
