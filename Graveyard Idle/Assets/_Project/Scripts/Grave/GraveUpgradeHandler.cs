@@ -99,9 +99,9 @@ namespace GraveyardIdle
 
             UpdateRemainingMoneyText();
 
-            if (_consumedMoney == RequiredMoney)
+            if (_consumedMoney >= RequiredMoney)
             {
-                if (!upgradeArea.activeSelf) return;
+                PlayerEvents.OnStopSpendingMoney?.Invoke();
                 MoneyCanvas.Instance.StopSpendingMoney();
                 AudioHandler.PlayAudio(Enums.AudioType.GraveBuilt);
                 //Activate();

@@ -65,6 +65,7 @@ namespace ZestGames
     public static class GraveEvents
     {
         public static Action<GraveDiggable> OnAGraveIsDug;
+        public static Action OnUpdateGraveActivationRequiredMoney;
     }
 
     public static class TruckEvents

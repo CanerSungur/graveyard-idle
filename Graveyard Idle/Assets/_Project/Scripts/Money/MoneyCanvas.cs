@@ -61,40 +61,56 @@ namespace GraveyardIdle
         //}
         public void StartSpendingMoney(GraveUpgradeHandler graveUpgradeHandler)
         {
-            SpendMoneyEnumIsPlaying = true;
-            _spendMoneyEnum = SpendMoney(graveUpgradeHandler);
-            StartCoroutine(_spendMoneyEnum);
+            if (graveUpgradeHandler.MoneyCanBeSpent)
+            {
+                SpendMoneyEnumIsPlaying = true;
+                _spendMoneyEnum = SpendMoney(graveUpgradeHandler);
+                StartCoroutine(_spendMoneyEnum);
+            }
         }
         public void StartSpendingMoney(InteractableGroundCanvas interactableGroundCanvas)
         {
-            SpendMoneyEnumIsPlaying = true;
-            _spendMoneyEnum = SpendMoney(interactableGroundCanvas);
-            StartCoroutine(_spendMoneyEnum);
+            if (interactableGroundCanvas.MoneyCanBeSpent)
+            {
+                SpendMoneyEnumIsPlaying = true;
+                _spendMoneyEnum = SpendMoney(interactableGroundCanvas);
+                StartCoroutine(_spendMoneyEnum);
+            }
         }
         public void StartSpendingMoney(BuyCoffinArea buyCoffinArea)
         {
-            SpendMoneyEnumIsPlaying = true;
-            _spendMoneyEnum = SpendMoney(buyCoffinArea);
-            StartCoroutine(_spendMoneyEnum);
+            if (buyCoffinArea.MoneyCanBeSpent)
+            {
+                SpendMoneyEnumIsPlaying = true;
+                _spendMoneyEnum = SpendMoney(buyCoffinArea);
+                StartCoroutine(_spendMoneyEnum);
+            }
         }
         public void StartSpendingMoney(CoffinCarriersUnlocker coffinCarriersUnlocker)
         {
-            SpendMoneyEnumIsPlaying = true;
-            _spendMoneyEnum = SpendMoney(coffinCarriersUnlocker);
-            StartCoroutine(_spendMoneyEnum);
+            if (coffinCarriersUnlocker.MoneyCanBeSpent)
+            {
+                SpendMoneyEnumIsPlaying = true;
+                _spendMoneyEnum = SpendMoney(coffinCarriersUnlocker);
+                StartCoroutine(_spendMoneyEnum);
+            }
         }
         public void StopSpendingMoney()
         {
-            if (SpendMoneyEnumIsPlaying)
-            {
-                StopCoroutine(_spendMoneyEnum);
-                SpendMoneyEnumIsPlaying = false;
-            }
+            StopAllCoroutines();
+            //StopCoroutine(_spendMoneyEnum);
+            SpendMoneyEnumIsPlaying = false;
+            //Debug.Log("STOP SPENDING MONEY!");
+            //if (SpendMoneyEnumIsPlaying)
+            //{
+            //    StopCoroutine(_spendMoneyEnum);
+            //    SpendMoneyEnumIsPlaying = false;
+            //}
         }
 
         private IEnumerator SpendMoney(GraveUpgradeHandler graveUpgradeHandler)
         {
-            while (DataManager.TotalMoney > 0)
+            while (graveUpgradeHandler.MoneyCanBeSpent && graveUpgradeHandler.gameObject.activeSelf)
             {
                 SpawnSpendMoney(graveUpgradeHandler);
                 AudioEvents.OnPlaySpendMoney?.Invoke();
@@ -103,7 +119,7 @@ namespace GraveyardIdle
         }
         private IEnumerator SpendMoney(InteractableGroundCanvas interactableGroundCanvas)
         {
-            while (DataManager.TotalMoney > 0)
+            while (interactableGroundCanvas.MoneyCanBeSpent && interactableGroundCanvas.gameObject.activeSelf)
             {
                 SpawnSpendMoney(interactableGroundCanvas);
                 AudioEvents.OnPlaySpendMoney?.Invoke();
@@ -112,7 +128,7 @@ namespace GraveyardIdle
         }
         private IEnumerator SpendMoney(BuyCoffinArea buyCoffinArea)
         {
-            while (DataManager.TotalMoney > 0)
+            while (buyCoffinArea.MoneyCanBeSpent && buyCoffinArea.gameObject.activeSelf)
             {
                 SpawnSpendMoney(buyCoffinArea);
                 AudioEvents.OnPlaySpendMoney?.Invoke();
@@ -121,7 +137,7 @@ namespace GraveyardIdle
         }
         private IEnumerator SpendMoney(CoffinCarriersUnlocker coffinCarriersUnlocker)
         {
-            while (DataManager.TotalMoney > 0)
+            while (coffinCarriersUnlocker.MoneyCanBeSpent && coffinCarriersUnlocker.gameObject.activeSelf)
             {
                 SpawnSpendMoney(coffinCarriersUnlocker);
                 AudioEvents.OnPlaySpendMoney?.Invoke();

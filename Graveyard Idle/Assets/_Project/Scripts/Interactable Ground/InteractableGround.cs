@@ -86,6 +86,9 @@ namespace GraveyardIdle
             Collider.enabled = true;
             SoilPile.gameObject.SetActive(false);
             DiggableSoil.gameObject.SetActive(false);
+            InteractableGroundCanvas.gameObject.SetActive(false);
+
+            GraveIsActivated = CanBeDigged = false;
         }
 
         #region PUBLICS
@@ -93,7 +96,7 @@ namespace GraveyardIdle
         {
             MeshRenderer.enabled = false;
             Collider.enabled = false;
-            _interactableGroundCanvas.gameObject.SetActive(false);
+            InteractableGroundCanvas.gameObject.SetActive(false);
             DiggableSoil.gameObject.SetActive(true);
             DiggableSoil.Init(this);
             SoilPile.gameObject.SetActive(true);
@@ -102,6 +105,7 @@ namespace GraveyardIdle
             GraveIsActivated = CanBeDigged = true;
 
             GraveManagerEvents.OnGraveActivated?.Invoke();
+            GraveEvents.OnUpdateGraveActivationRequiredMoney?.Invoke();
         }
         #endregion
 

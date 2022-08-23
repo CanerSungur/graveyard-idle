@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using ZestGames;
 namespace GraveyardIdle
@@ -14,6 +15,8 @@ namespace GraveyardIdle
         public static Transform[] WaitTransforms { get; private set; }
         public static bool CoffinTakeTriggered, CoffinThrowTriggered;
 
+        private readonly WaitForSeconds _waitForCarryCheck = new WaitForSeconds(10f);
+
         public void Init(GameManager gameManager)
         {
             _carriersAreBusy = false;
@@ -21,6 +24,8 @@ namespace GraveyardIdle
             CoffinTakeTriggered = CoffinThrowTriggered = false;
 
             LoadData();
+
+            StartCoroutine(CarryCheckCoroutine());
 
             GraveManagerEvents.OnCheckForCarrierActivation += HandleGraveDigged;
             CoffinCarrierEvents.OnReadyForDuty += HandleCarriersReadyForDuty;
@@ -39,16 +44,14 @@ namespace GraveyardIdle
         private void EnableCarriers()
         {
             for (int i = 0; i < coffinCarriers.Length; i++)
-            {
                 coffinCarriers[i].gameObject.SetActive(true);
-            }
+
+            _isActivated = true;
         }
         private void DisableCarriers()
         {
             for (int i = 0; i < coffinCarriers.Length; i++)
-            {
                 coffinCarriers[i].gameObject.SetActive(false);
-            }
         }
         private void HandleGraveDigged()
         {
@@ -70,6 +73,15 @@ namespace GraveyardIdle
             _carriersAreBusy = CoffinTakeTriggered = CoffinThrowTriggered = false;
         }
 
+        private IEnumerator CarryCheckCoroutine()
+        {
+            while (true)
+            {
+                yield return _waitForCarryCheck;
+                HandleGraveDigged();
+            }
+        }
+
         #region SAVE-LOAD
         private void LoadData()
         {
@@ -84,14 +96,14 @@ namespace GraveyardIdle
             PlayerPrefs.SetInt($"CoffinCarriersActivated", _isActivated == true ? 1 : 0);
             PlayerPrefs.Save();
         }
-        private void OnApplicationQuit()
-        {
-            SaveData();
-        }
-        private void OnApplicationPause(bool pause)
-        {
-            SaveData();
-        }
+        //private void OnApplicationQuit()
+        //{
+        //    SaveData();
+        //}
+        //private void OnApplicationPause(bool pause)
+        //{
+        //    SaveData();
+        //}
         #endregion
     }
 }

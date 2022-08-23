@@ -24,11 +24,16 @@ namespace GraveyardIdle
 
             LoadData();
             UpdateRemainingMoneyText();
+
+            GraveEvents.OnUpdateGraveActivationRequiredMoney += UpdateRemainingMoneyText;
         }
 
         private void OnDisable()
         {
             if (!_interactableGround) return;
+
+            GraveEvents.OnUpdateGraveActivationRequiredMoney -= UpdateRemainingMoneyText;
+
             SaveData();
         }
 
@@ -66,7 +71,7 @@ namespace GraveyardIdle
 
             UpdateRemainingMoneyText();
 
-            if (_consumedMoney == RequiredMoney)
+            if (_consumedMoney >= RequiredMoney)
             {
                 PlayerEvents.OnStopSpendingMoney?.Invoke();
                 MoneyCanvas.Instance.StopSpendingMoney();
