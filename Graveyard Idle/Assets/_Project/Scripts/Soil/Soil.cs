@@ -2,11 +2,13 @@ using UnityEngine;
 using System;
 using DG.Tweening;
 using ZestGames;
+using ZestCore.Utility;
 
 namespace GraveyardIdle
 {
     public class Soil : MonoBehaviour
     {
+        private bool _diggingStarted = false;
         private bool _initialized = false;
         private InteractableGround _interactableGround;
 
@@ -17,6 +19,9 @@ namespace GraveyardIdle
         private bool _playerIsInArea = false;
         public bool PlayerIsInArea => _playerIsInArea;
         private int _currentBlendWeightIndex = -1;
+
+        [Header("-- WALL SETUP --")]
+        [SerializeField] private GameObject[] walls;
 
         #region DIGGING
         private int _digCount = 5;
@@ -43,6 +48,7 @@ namespace GraveyardIdle
         public void Init(InteractableGround interactableGround)
         {
             _initialized = true;
+            _diggingStarted = false;
             _interactableGround = interactableGround;
 
             _skinnedMeshRenderer = GetComponent<SkinnedMeshRenderer>();
@@ -51,6 +57,8 @@ namespace GraveyardIdle
 
             _playerIsInArea = false;
             transform.localPosition = Vector3.zero;
+
+            DisableWalls();
 
             ShovelEvents.OnDigHappened += GetDigged;
             ShovelEvents.OnThrowSoilToGrave += GetFilled;
@@ -104,6 +112,7 @@ namespace GraveyardIdle
         {
             if (!_playerIsInArea || !_interactableGround.CanBeDigged) return;
 
+            EnableWalls();
             _currentBlendWeightIndex = _currentDigCount;
             _currentDigCount++;
 
@@ -111,6 +120,7 @@ namespace GraveyardIdle
 
             if (_currentDigCount == _digCount)
             {
+                DisableWalls();
                 PlayerEvents.OnExitedDigZone?.Invoke();
                 PlayerEvents.OnStopDigging?.Invoke();
 
@@ -128,6 +138,19 @@ namespace GraveyardIdle
             _skinnedMeshRenderer.BakeMesh(_changedMesh);
             _meshCollider.sharedMesh = null;
             _meshCollider.sharedMesh = _changedMesh;
+        }
+
+        private void EnableWalls()
+        {
+            for (int i = 0; i < walls.Length; i++)
+                walls[i].SetActive(true);
+        }
+        private void DisableWalls()
+        {
+            Delayer.DoActionAfterDelay(this, 2f, () => {
+                for (int i = 0; i < walls.Length; i++)
+                    walls[i].SetActive(false);
+            });
         }
 
         #region DOTWEEN FUNCTIONS

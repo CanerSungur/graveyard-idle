@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using DG.Tweening;
 using ZestGames;
+using ZestCore.Utility;
 
 namespace GraveyardIdle
 {
@@ -17,6 +18,9 @@ namespace GraveyardIdle
         private bool _playerIsInArea = false;
         public bool PlayerIsInArea => _playerIsInArea;
         private int _currentBlendWeightIndex = -1;
+
+        [Header("-- WALL SETUP --")]
+        [SerializeField] private GameObject[] walls;
 
         #region FILLING
         private int _emptiedCount = 5;
@@ -45,6 +49,8 @@ namespace GraveyardIdle
             _meshCollider = GetComponent<MeshCollider>();
 
             _playerIsInArea = false;
+
+            DisableWalls();
 
             ShovelEvents.OnFillHappened += GetEmtptied;
             ShovelEvents.OnThrowSoilToPile += GetPiled;
@@ -98,6 +104,7 @@ namespace GraveyardIdle
         {
             if (!_playerIsInArea || !_interactableGround.CanBeFilled) return;
 
+            EnableWalls();
             _currentBlendWeightIndex = _currentEmptiedCount;
             _currentEmptiedCount++;
 
@@ -109,6 +116,7 @@ namespace GraveyardIdle
             //}
             if (_currentEmptiedCount == _emptiedCount)
             {
+                DisableWalls();
                 PlayerEvents.OnExitedFillZone?.Invoke();
                 PlayerEvents.OnStopFilling?.Invoke();
             }
@@ -119,6 +127,19 @@ namespace GraveyardIdle
             _skinnedMeshRenderer.BakeMesh(_changedMesh);
             _meshCollider.sharedMesh = null;
             _meshCollider.sharedMesh = _changedMesh;
+        }
+
+        private void EnableWalls()
+        {
+            for (int i = 0; i < walls.Length; i++)
+                walls[i].SetActive(true);
+        }
+        private void DisableWalls()
+        {
+            Delayer.DoActionAfterDelay(this, 2f, () => {
+                for (int i = 0; i < walls.Length; i++)
+                    walls[i].SetActive(false);
+            });
         }
 
         #region DOTWEEN FUNCTIONS

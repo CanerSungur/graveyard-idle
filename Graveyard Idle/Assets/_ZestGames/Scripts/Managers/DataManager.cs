@@ -31,7 +31,7 @@ namespace ZestGames
 
         #region CORE DATA
         private readonly float _coreDigSpeed = 1.5f;
-        private readonly float _coreMaintenanceSpeed = 0.3f;
+        private readonly float _coreMaintenanceSpeed = 0.5f;
         #endregion
 
         #region INCREMENT DATA

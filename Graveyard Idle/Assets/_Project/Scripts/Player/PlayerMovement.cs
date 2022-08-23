@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using ZestGames;
 
@@ -28,12 +29,14 @@ namespace GraveyardIdle
 
             PlayerEvents.OnTakeACoffin += SetCarrySpeed;
             PlayerEvents.OnDropCoffin += SetDefaultSpeed;
+            GraveManagerEvents.OnGraveActivated += CheckForDigActivation;
         }
 
         private void OnDisable()
         {
             PlayerEvents.OnTakeACoffin -= SetCarrySpeed;
             PlayerEvents.OnDropCoffin -= SetDefaultSpeed;
+            GraveManagerEvents.OnGraveActivated -= CheckForDigActivation;
         }
 
         private void Update()
@@ -88,5 +91,19 @@ namespace GraveyardIdle
         private void RotateForUpgradeCamera() => transform.rotation = Quaternion.identity;
         private void SetDefaultSpeed(Coffin ignore, InteractableGround ignoreAlso) => _currentSpeed = defaultSpeed;
         private void SetCarrySpeed() => _currentSpeed = carrySpeed;
+        private void CheckForDigActivation()
+        {
+            StartCoroutine(CheckForDigActivationCoroutine());
+        }
+        private IEnumerator CheckForDigActivationCoroutine()
+        {
+            yield return new WaitForSeconds(0.1f);
+
+            if (_player.IsInDigZone && !_player.IsDigging && !_player.IsCarryingCoffin)
+                PlayerEvents.OnStartDigging?.Invoke();
+
+            if (_player.IsInFillZone && !_player.IsFilling && !_player.IsCarryingCoffin)
+                PlayerEvents.OnStartFilling?.Invoke();
+        }
     }
 }
