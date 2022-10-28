@@ -12,7 +12,7 @@ namespace GraveyardIdle
         private Coffin _coffin;
 
         private bool _targetReached, _startMovingToAssignedGrave;
-        private Grave _graveToBeDropped;
+        private GraveSystem.Grave _graveToBeDropped;
 
         #region SEQUENCE
         private Sequence _getThrownSequence, _rotateSequence;
@@ -41,7 +41,7 @@ namespace GraveyardIdle
 
             if (!_targetReached)
             {
-                if (Operation.IsTargetReached(transform, _graveToBeDropped.CarrierDropPoint.position, .75f))
+                if (Operation.IsTargetReached(transform, _graveToBeDropped.CarrierDropTransform.position, .75f))
                 {
                     _targetReached = true;
                     //action?.Invoke();
@@ -50,8 +50,8 @@ namespace GraveyardIdle
                 }
                 else
                 {
-                    Navigation.MoveTransform(transform, _graveToBeDropped.CarrierDropPoint.position, 1f);
-                    Navigation.LookAtTarget(transform, _graveToBeDropped.CarrierDropPoint.position);
+                    Navigation.MoveTransform(transform, _graveToBeDropped.CarrierDropTransform.position, 1f);
+                    Navigation.LookAtTarget(transform, _graveToBeDropped.CarrierDropTransform.position);
                 }
             }
         }
@@ -61,8 +61,8 @@ namespace GraveyardIdle
             _targetReached = false;
             _startMovingToAssignedGrave = true;
 
-            _graveToBeDropped = GraveManager.EmptyGraves[GraveManager.EmptyGraves.Count - 1];
-            _graveToBeDropped.CarriersAssigned = true;
+            _graveToBeDropped = GraveSystem.GraveManager.Instance.EmptyGraves[GraveSystem.GraveManager.Instance.EmptyGraves.Count - 1];
+            _graveToBeDropped.AssignCarriers();
         }
 
         #region DOTWEEN FUNCTIONS
@@ -85,10 +85,10 @@ namespace GraveyardIdle
                         Delayer.DoActionAfterDelay(this, 1f, () => CoffinCarrierEvents.OnReturnToWaitingPosition?.Invoke());
                         _coffin.GetThrownToGraveByCarriers(_graveToBeDropped.transform);
 
-                        _graveToBeDropped.InteractableGround.HasCoffin = true;
-                        _graveToBeDropped.InteractableGround.CanBeThrownCoffin = false;
+                        //_graveToBeDropped.InteractableGround.HasCoffin = true;
+                        //_graveToBeDropped.InteractableGround.CanBeThrownCoffin = false;
                         GraveManagerEvents.OnCoffinThrownToGrave?.Invoke();
-                        GraveManager.RemoveEmptyGrave(_graveToBeDropped);
+                        //GraveManager.RemoveEmptyGrave(_graveToBeDropped);
                     });
             }
         }

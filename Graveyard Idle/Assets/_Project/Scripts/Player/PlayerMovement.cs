@@ -29,6 +29,7 @@ namespace GraveyardIdle
 
             PlayerEvents.OnTakeACoffin += SetCarrySpeed;
             PlayerEvents.OnDropCoffin += SetDefaultSpeed;
+            PlayerEvents.OnThrowCoffin += SetDefaultSpeed;
             GraveManagerEvents.OnGraveActivated += CheckForDigActivation;
         }
 
@@ -36,6 +37,7 @@ namespace GraveyardIdle
         {
             PlayerEvents.OnTakeACoffin -= SetCarrySpeed;
             PlayerEvents.OnDropCoffin -= SetDefaultSpeed;
+            PlayerEvents.OnThrowCoffin -= SetDefaultSpeed;
             GraveManagerEvents.OnGraveActivated -= CheckForDigActivation;
         }
 
@@ -90,6 +92,7 @@ namespace GraveyardIdle
         }
         private void RotateForUpgradeCamera() => transform.rotation = Quaternion.identity;
         private void SetDefaultSpeed(Coffin ignore, InteractableGround ignoreAlso) => _currentSpeed = defaultSpeed;
+        private void SetDefaultSpeed(Coffin ignore, GraveyardIdle.GraveSystem.Grave ignoreAlso) => _currentSpeed = defaultSpeed;
         private void SetCarrySpeed() => _currentSpeed = carrySpeed;
         private void CheckForDigActivation()
         {

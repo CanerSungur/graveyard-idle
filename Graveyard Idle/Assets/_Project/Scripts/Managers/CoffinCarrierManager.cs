@@ -55,7 +55,7 @@ namespace GraveyardIdle
         }
         private void HandleGraveDigged()
         {
-            if (!_carriersAreBusy && GraveManager.CanCoffinBeingCarried && CoffinAreaStackHandler.CoffinsInArea.Count > 0)
+            if (_isActivated && !_carriersAreBusy && GraveSystem.GraveManager.Instance.CanCoffinBeCarried && CoffinAreaStackHandler.CoffinsInArea.Count > 0)
             {
                 _carriersAreBusy = true;
 

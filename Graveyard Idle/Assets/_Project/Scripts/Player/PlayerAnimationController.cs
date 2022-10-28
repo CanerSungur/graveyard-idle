@@ -47,6 +47,7 @@ namespace GraveyardIdle
             PlayerEvents.OnMove += Run;
             PlayerEvents.OnTakeACoffin += StartCarryingCoffin;
             PlayerEvents.OnDropCoffin += StopCarryingCoffin;
+            PlayerEvents.OnThrowCoffin += StopCarryingCoffin;
             PlayerEvents.OnEnteredDigZone += StartDigging;
             PlayerEvents.OnExitedDigZone += StopDigging;
             PlayerEvents.OnEnteredFillZone += StartDigging;
@@ -68,6 +69,7 @@ namespace GraveyardIdle
             PlayerEvents.OnMove -= Run;
             PlayerEvents.OnTakeACoffin -= StartCarryingCoffin;
             PlayerEvents.OnDropCoffin -= StopCarryingCoffin;
+            PlayerEvents.OnThrowCoffin -= StopCarryingCoffin;
             PlayerEvents.OnEnteredDigZone -= StartDigging;
             PlayerEvents.OnExitedDigZone -= StopDigging;
             PlayerEvents.OnEnteredFillZone -= StartDigging;
@@ -91,6 +93,11 @@ namespace GraveyardIdle
             _animator.SetBool(_carryingCoffinID, true);
         }
         private void StopCarryingCoffin(Coffin ignore, InteractableGround ignoreAlso)
+        {
+            _animator.SetFloat(_runSpeedID, 1f);
+            _animator.SetBool(_carryingCoffinID, false);
+        }
+        private void StopCarryingCoffin(Coffin ignore, GraveyardIdle.GraveSystem.Grave ignoreAlso)
         {
             _animator.SetFloat(_runSpeedID, 1f);
             _animator.SetBool(_carryingCoffinID, false);

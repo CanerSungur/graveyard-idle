@@ -15,6 +15,7 @@ namespace ZestGames
     {
         public static Action OnMove, OnIdle, OnTakeACoffin, OnStartDigging, OnStopDigging, OnStartFilling, OnStopFilling;
         public static Action<Coffin, InteractableGround> OnDropCoffin;
+        public static Action<Coffin, GraveyardIdle.GraveSystem.Grave> OnThrowCoffin;
         public static Action<Coffin> OnSetCarryingCoffin;
         public static Action OnEnteredDigZone, OnExitedDigZone, OnEnteredFillZone, OnExitedFillZone, OnPutDownShovel, OnPullOutShovel, OnStartedMaintenance, OnStoppedMaintenance, OnMaintenanceSuccessfull;
         public static Action OnSetCurrentDigSpeed, OnSetCurrentMaintenanceSpeed;

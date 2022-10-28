@@ -1,3 +1,4 @@
+using GraveyardIdle.GraveSystem;
 using UnityEngine;
 using ZestGames;
 
@@ -10,11 +11,28 @@ namespace GraveyardIdle
         private RectTransform _rectTransform;
         private Camera _camera;
         private Vector2 _currentPosition;
+        private GraveGround _graveGround = null;
         private InteractableGroundCanvas _interactableGroundCanvas = null;
         private GraveUpgradeHandler _graveUpgradeHandler = null;
         private BuyCoffinArea _buyCoffinArea = null;
         private CoffinCarriersUnlocker _coffinCarriersUnlocker = null;
         private float _disableTime;
+
+        public void Init(MoneyCanvas moneyCanvas, GraveGround graveGround)
+        {
+            if (!_moneyCanvas)
+            {
+                _moneyCanvas = moneyCanvas;
+                _canvasRect = _moneyCanvas.GetComponent<RectTransform>();
+                _rectTransform = GetComponent<RectTransform>();
+                _camera = Camera.main;
+            }
+
+            _graveGround = graveGround;
+            _disableTime = Time.time + 0.9f;
+            _currentPosition = Hud.MoneyAnchoredPosition;
+            _rectTransform.anchoredPosition = _currentPosition;
+        }
 
         public void Init(MoneyCanvas moneyCanvas, InteractableGroundCanvas interactableGroundCanvas)
         {
@@ -80,6 +98,7 @@ namespace GraveyardIdle
 
         private void OnDisable()
         {
+            _graveGround = null;
             _interactableGroundCanvas = null;
             _graveUpgradeHandler = null;
             _buyCoffinArea = null;
@@ -87,6 +106,20 @@ namespace GraveyardIdle
 
         private void Update()
         {
+            if (_graveGround)
+            {
+                Vector2 travel = GetWorldPointToScreenPoint(_graveGround.transform) - _rectTransform.anchoredPosition;
+                _rectTransform.Translate(travel * 10f * Time.deltaTime, _camera.transform);
+
+                if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_graveGround.transform)) < 25f)
+                {
+                    gameObject.SetActive(false);
+                }
+
+                if (Time.time >= _disableTime)
+                    gameObject.SetActive(false);
+            }
+
             if (_buyCoffinArea)
             {
                 Vector2 travel = GetWorldPointToScreenPoint(_buyCoffinArea.transform) - _rectTransform.anchoredPosition;

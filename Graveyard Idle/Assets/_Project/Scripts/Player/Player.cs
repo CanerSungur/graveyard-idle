@@ -85,6 +85,7 @@ namespace GraveyardIdle
             PlayerEvents.OnIdle += TakeCoffinCloser;
             PlayerEvents.OnTakeACoffin += TakeACoffin;
             PlayerEvents.OnDropCoffin += DropCoffin;
+            PlayerEvents.OnThrowCoffin += DropCoffin;
             PlayerEvents.OnSetCarryingCoffin += SetCarryingCoffin;
             PlayerEvents.OnStartDigging += StartDigging;
             PlayerEvents.OnStopDigging += StopDigging;
@@ -104,6 +105,7 @@ namespace GraveyardIdle
             PlayerEvents.OnIdle -= TakeCoffinCloser;
             PlayerEvents.OnTakeACoffin -= TakeACoffin;
             PlayerEvents.OnDropCoffin -= DropCoffin;
+            PlayerEvents.OnThrowCoffin -= DropCoffin;
             PlayerEvents.OnSetCarryingCoffin += SetCarryingCoffin;
             PlayerEvents.OnStartDigging -= StartDigging;
             PlayerEvents.OnStopDigging -= StopDigging;
@@ -146,6 +148,11 @@ namespace GraveyardIdle
             IsCarryingCoffin = true;
         }
         private void DropCoffin(Coffin ignore, InteractableGround ignoreAlso)
+        {
+            IsCarryingCoffin = false;
+            //CoffinCarryingNow.GetDropped();
+        }
+        private void DropCoffin(Coffin ignore, GraveyardIdle.GraveSystem.Grave ignoreAlso)
         {
             IsCarryingCoffin = false;
             //CoffinCarryingNow.GetDropped();

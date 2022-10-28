@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using ZestGames;
+using GraveyardIdle.GraveSystem;
 
 namespace GraveyardIdle
 {
@@ -34,6 +35,17 @@ namespace GraveyardIdle
         {
             if (!_player) return;
             PlayerEvents.OnStopSpendingMoney -= StopSpending;
+        }
+
+        private IEnumerator SpendMoney(GraveGround graveGround)
+        {
+            while (graveGround.MoneyCanBeSpent)
+            {
+                graveGround.ConsumeMoney(_currentMoneySpendValue);
+                yield return new WaitForSeconds(_currentSpendMoneyDelay);
+                //DecreaseMoneyDelay();
+                UpdateMoneyValue();
+            }
         }
 
         private IEnumerator SpendMoney(GraveUpgradeHandler graveUpgradeHandler)
@@ -87,6 +99,19 @@ namespace GraveyardIdle
         }
 
         #region PUBLICS
+        public void StartSpending(GraveGround graveGround)
+        {
+            _spendMoneyEnum = SpendMoney(graveGround);
+            _currentSpendMoneyDelay = _startingSpendMoneyDelay;
+            _currentMoneySpendValue = DataManager.MoneyValue;
+            _moneySpendingCount = 0;
+            StartCoroutine(_spendMoneyEnum);
+
+            // Start throwing money
+            if (graveGround.MoneyCanBeSpent)
+                MoneyCanvas.Instance.StartSpendingMoney(graveGround);
+        }
+
         public void StartSpending(GraveUpgradeHandler graveUpgradeHandler)
         {
             _spendMoneyEnum = SpendMoney(graveUpgradeHandler);

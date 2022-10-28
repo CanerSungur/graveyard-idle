@@ -22,14 +22,17 @@ namespace GraveyardIdle
             _animationController = playerAnimationController;
 
             PlayerEvents.OnDropCoffin += StopIK;
+            PlayerEvents.OnThrowCoffin += StopIK;
         }
 
         private void OnDisable()
         {
             PlayerEvents.OnDropCoffin -= StopIK;
+            PlayerEvents.OnThrowCoffin -= StopIK;
         }
 
         private void StopIK(Coffin ignore, InteractableGround ignoreAlso) => _rightHandObject = _leftHandObject = null;
+        private void StopIK(Coffin ignore, GraveyardIdle.GraveSystem.Grave ignoreAlso) => _rightHandObject = _leftHandObject = null;
         private void OnAnimatorIK()
         {
             if (_animationController.Animator && _rightHandObject && _leftHandObject)

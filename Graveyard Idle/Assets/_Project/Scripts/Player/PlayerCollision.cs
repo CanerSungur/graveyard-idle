@@ -1,3 +1,4 @@
+using GraveyardIdle.GraveSystem;
 using UnityEngine;
 using ZestGames;
 
@@ -100,6 +101,14 @@ namespace GraveyardIdle
                 grave.PlayerIsInMaintenanceArea = true;
                 _player.MaintenanceHandler.StartMaintenance(grave);
             }
+
+            #region NEW GRAVE SYSTEM
+            if (other.TryGetComponent(out GraveGround graveGround) && !graveGround.PlayerIsInArea && _player.MoneyHandler.CanSpendMoney)
+            {
+                graveGround.PlayerGetsIn();
+                _player.MoneyHandler.StartSpending(graveGround);
+            }
+            #endregion
         }
 
         private void OnTriggerExit(Collider other)
@@ -156,6 +165,14 @@ namespace GraveyardIdle
                 grave.PlayerIsInMaintenanceArea = false;
                 //grave.OnStartSpoiling?.Invoke();
             }
+
+            #region NEW GRAVE SYSTEM
+            if (other.TryGetComponent(out GraveGround graveGround) && graveGround.PlayerIsInArea)
+            {
+                graveGround.PlayerGetsOut();
+                _player.MoneyHandler.StopSpending();
+            }
+            #endregion
         }
     }
 }

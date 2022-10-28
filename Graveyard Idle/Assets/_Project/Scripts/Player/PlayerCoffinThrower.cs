@@ -12,6 +12,7 @@ namespace GraveyardIdle
             _player = player;
 
             PlayerEvents.OnDropCoffin += ThrowCoffin;
+            PlayerEvents.OnThrowCoffin += ThrowCoffin;
         }
 
         private void OnDisable()
@@ -19,11 +20,16 @@ namespace GraveyardIdle
             if (!_player) return;
 
             PlayerEvents.OnDropCoffin -= ThrowCoffin;
+            PlayerEvents.OnThrowCoffin -= ThrowCoffin;
         }
 
         private void ThrowCoffin(Coffin carriedCoffin, InteractableGround triggeredInteractableGround)
         {
             carriedCoffin.GetThrownToGrave(triggeredInteractableGround.transform);
+        }
+        private void ThrowCoffin(Coffin carriedCoffin, GraveyardIdle.GraveSystem.Grave triggeredGrave)
+        {
+            carriedCoffin.GetThrownToGrave(triggeredGrave.transform);
         }
     }
 }

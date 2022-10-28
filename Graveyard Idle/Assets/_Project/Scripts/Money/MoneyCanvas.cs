@@ -1,4 +1,5 @@
 using System.Collections;
+using GraveyardIdle.GraveSystem;
 using UnityEngine;
 using ZestGames;
 
@@ -27,6 +28,11 @@ namespace GraveyardIdle
         {
             CollectMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.CollectMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<CollectMoney>();
             money.Init(this, spawnTransform);
+        }
+        public void SpawnSpendMoney(GraveGround graveGround)
+        {
+            SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
+            money.Init(this, graveGround);
         }
         public void SpawnSpendMoney(GraveUpgradeHandler graveUpgradeHandler)
         {
@@ -59,6 +65,16 @@ namespace GraveyardIdle
         //    _spendMoneyEnum = SpendMoney(phaseUnlocker);
         //    StartCoroutine(_spendMoneyEnum);
         //}
+        public void StartSpendingMoney(GraveGround graveGround)
+        {
+            if (graveGround.MoneyCanBeSpent)
+            {
+                SpendMoneyEnumIsPlaying = true;
+                _spendMoneyEnum = SpendMoney(graveGround);
+                StartCoroutine(_spendMoneyEnum);
+            }
+        }
+
         public void StartSpendingMoney(GraveUpgradeHandler graveUpgradeHandler)
         {
             if (graveUpgradeHandler.MoneyCanBeSpent)
@@ -106,6 +122,16 @@ namespace GraveyardIdle
             //    StopCoroutine(_spendMoneyEnum);
             //    SpendMoneyEnumIsPlaying = false;
             //}
+        }
+
+        private IEnumerator SpendMoney(GraveGround graveGround)
+        {
+            while (graveGround.MoneyCanBeSpent && graveGround.gameObject.activeSelf)
+            {
+                SpawnSpendMoney(graveGround);
+                AudioEvents.OnPlaySpendMoney?.Invoke();
+                yield return _waitforSpendMoneyDelay;
+            }
         }
 
         private IEnumerator SpendMoney(GraveUpgradeHandler graveUpgradeHandler)

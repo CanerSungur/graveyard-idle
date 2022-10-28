@@ -33,6 +33,7 @@ namespace GraveyardIdle
 
             PlayerEvents.OnTakeACoffin += StartCarryingCoffin;
             PlayerEvents.OnDropCoffin += StopCarryingCoffin;
+            PlayerEvents.OnThrowCoffin += StopCarryingCoffin;
             PlayerEvents.OnStartDigging += StartedDigging;
             PlayerEvents.OnStopDigging += StoppedDigging;
             PlayerEvents.OnStartFilling += StartedFilling;
@@ -43,6 +44,7 @@ namespace GraveyardIdle
         {
             PlayerEvents.OnTakeACoffin -= StartCarryingCoffin;
             PlayerEvents.OnDropCoffin -= StopCarryingCoffin;
+            PlayerEvents.OnThrowCoffin -= StopCarryingCoffin;
             PlayerEvents.OnStartDigging -= StartedDigging;
             PlayerEvents.OnStopDigging -= StoppedDigging;
             PlayerEvents.OnStartFilling -= StartedFilling;
@@ -75,6 +77,7 @@ namespace GraveyardIdle
         private void StoppedFilling() => _activateRotation = false;
         private void StartCarryingCoffin() => StartChangeRotationSequence(_carryRotation);
         private void StopCarryingCoffin(Coffin ignore, InteractableGround ignoreAlso) => StartChangeRotationSequence(_defaultRotation);
+        private void StopCarryingCoffin(Coffin ignore, GraveyardIdle.GraveSystem.Grave ignoreAlso) => StartChangeRotationSequence(_defaultRotation);
         private void StartChangeRotationSequence(Vector3 rotation)
         {
             _changeRotationSequence.Pause();

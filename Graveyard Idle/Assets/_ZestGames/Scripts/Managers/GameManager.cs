@@ -17,6 +17,7 @@ namespace ZestGames
         private GraveManager _graveManager;
         private PopupManager _popupManager;
         private CoffinCarrierManager _coffinCarrierManager;
+        private GraveyardIdle.GraveSystem.GraveManager _newGraveManager;
 
         private void Init()
         {
@@ -33,6 +34,8 @@ namespace ZestGames
             _uiManager.Init(this);
             _graveManager = GetComponent<GraveManager>();
             _graveManager.Init(this);
+            _newGraveManager = GetComponent<GraveyardIdle.GraveSystem.GraveManager>();
+            _newGraveManager.Init(this);
             _popupManager = GetComponent<PopupManager>();
             _popupManager.Init(this);
             _coffinCarrierManager = GetComponent<CoffinCarrierManager>();
