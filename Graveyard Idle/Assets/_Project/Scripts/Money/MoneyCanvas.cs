@@ -26,50 +26,15 @@ namespace GraveyardIdle
 
         public void SpawnCollectMoney(Transform spawnTransform)
         {
-            CollectMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.CollectMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<CollectMoney>();
+            CollectMoney2D money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.CollectMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<CollectMoney2D>();
             money.Init(this, spawnTransform);
         }
-        public void SpawnSpendMoney(GraveGround graveGround)
+        public void SpawnSpendMoney(Transform targetTransform)
         {
-            SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
-            money.Init(this, graveGround);
+            SpendMoney2D money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney2D>();
+            money.Init(this, targetTransform);
         }
-        public void SpawnSpendMoney(FinishedGrave finishedGrave)
-        {
-            SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
-            money.Init(this, finishedGrave);
-        }
-        public void SpawnSpendMoney(GraveUpgradeHandler graveUpgradeHandler)
-        {
-            SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
-            money.Init(this, graveUpgradeHandler);
-        }
-        public void SpawnSpendMoney(InteractableGroundCanvas interactableGroundCanvas)
-        {
-            SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
-            money.Init(this, interactableGroundCanvas);
-        }
-        public void SpawnSpendMoney(BuyCoffinArea buyCoffinArea)
-        {
-            SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
-            money.Init(this, buyCoffinArea);
-        }
-        public void SpawnSpendMoney(CoffinCarriersUnlocker coffinCarriersUnlocker)
-        {
-            SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
-            money.Init(this, coffinCarriersUnlocker);
-        }
-        //public void SpawnSpendMoney(PhoneBooth phoneBooth)
-        //{
-        //    SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
-        //    money.Init(this, phoneBooth);
-        //}
-        //public void StartSpendingMoney(PhaseUnlocker phaseUnlocker)
-        //{
-        //    SpendMoneyEnumIsPlaying = true;
-        //    _spendMoneyEnum = SpendMoney(phaseUnlocker);
-        //    StartCoroutine(_spendMoneyEnum);
-        //}
+
         public void StartSpendingMoney(GraveGround graveGround)
         {
             if (graveGround.MoneyCanBeSpent)
@@ -142,7 +107,7 @@ namespace GraveyardIdle
         {
             while (graveGround.MoneyCanBeSpent && graveGround.gameObject.activeSelf)
             {
-                SpawnSpendMoney(graveGround);
+                SpawnSpendMoney(graveGround.MoneySpendTransform);
                 AudioEvents.OnPlaySpendMoney?.Invoke();
                 yield return _waitforSpendMoneyDelay;
             }
@@ -151,7 +116,7 @@ namespace GraveyardIdle
         {
             while (finishedGrave.UpgradeHandler.MoneyCanBeSpent)
             {
-                SpawnSpendMoney(finishedGrave);
+                SpawnSpendMoney(finishedGrave.UpgradeHandler.MoneyImageTransform);
                 AudioEvents.OnPlaySpendMoney?.Invoke();
                 yield return _waitforSpendMoneyDelay;
             }
@@ -161,7 +126,7 @@ namespace GraveyardIdle
         {
             while (graveUpgradeHandler.MoneyCanBeSpent && graveUpgradeHandler.gameObject.activeSelf)
             {
-                SpawnSpendMoney(graveUpgradeHandler);
+                SpawnSpendMoney(graveUpgradeHandler.UpgradeArea.transform);
                 AudioEvents.OnPlaySpendMoney?.Invoke();
                 yield return _waitforSpendMoneyDelay;
             }
@@ -170,7 +135,7 @@ namespace GraveyardIdle
         {
             while (interactableGroundCanvas.MoneyCanBeSpent && interactableGroundCanvas.gameObject.activeSelf)
             {
-                SpawnSpendMoney(interactableGroundCanvas);
+                SpawnSpendMoney(interactableGroundCanvas.transform);
                 AudioEvents.OnPlaySpendMoney?.Invoke();
                 yield return _waitforSpendMoneyDelay;
             }
@@ -179,7 +144,7 @@ namespace GraveyardIdle
         {
             while (buyCoffinArea.MoneyCanBeSpent && buyCoffinArea.gameObject.activeSelf)
             {
-                SpawnSpendMoney(buyCoffinArea);
+                SpawnSpendMoney(buyCoffinArea.transform);
                 AudioEvents.OnPlaySpendMoney?.Invoke();
                 yield return _waitforSpendMoneyDelay;
             }
@@ -188,7 +153,7 @@ namespace GraveyardIdle
         {
             while (coffinCarriersUnlocker.MoneyCanBeSpent && coffinCarriersUnlocker.gameObject.activeSelf)
             {
-                SpawnSpendMoney(coffinCarriersUnlocker);
+                SpawnSpendMoney(coffinCarriersUnlocker.transform);
                 AudioEvents.OnPlaySpendMoney?.Invoke();
                 yield return _waitforSpendMoneyDelay;
             }

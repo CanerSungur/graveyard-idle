@@ -196,6 +196,7 @@ namespace GraveyardIdle
             {
                 PlayerEvents.OnStoppedMaintenance?.Invoke();
                 WateringCanEvents.OnStoppedWatering?.Invoke();
+                finishedGraveForMaintenance.OnContinueSpoiling?.Invoke();
                 finishedGraveForMaintenance.ExitedMaintenanceArea();
             }
             #endregion

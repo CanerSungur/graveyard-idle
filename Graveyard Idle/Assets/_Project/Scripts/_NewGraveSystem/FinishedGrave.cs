@@ -38,7 +38,7 @@ namespace GraveyardIdle.GraveSystem
         #endregion
 
         #region EVENTS
-        public Action OnStartSpoiling, OnStopSpoiling;
+        public Action OnStartSpoiling, OnStopSpoiling, OnContinueSpoiling;
         #endregion
 
         public void Init(Grave grave)
@@ -80,9 +80,14 @@ namespace GraveyardIdle.GraveSystem
                 _currentLevel++;
 
                 // start closing current grave
+                _spoilHandler.enabled = false;
                 DisableCurrentGravePiece();
                 // enable other grave with a delay(3 seconds)
-                Delayer.DoActionAfterDelay(this, 3f, EnableUpgradedGravePiece);
+                Delayer.DoActionAfterDelay(this, 3f, () => {
+                    _spoilHandler.enabled = true;
+                    _spoilHandler.Init(this);
+                    EnableUpgradedGravePiece();
+                    });
             }
         }
         #endregion

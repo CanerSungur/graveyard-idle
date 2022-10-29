@@ -43,7 +43,6 @@ namespace GraveyardIdle
         }
         private void StopRewarding()
         {
-            _currentMaintenanceRewardMoney = 0;
             StopCoroutine(_wateringRewardCoroutine);
         }
         private void MaintenanceSuccessfull(Grave grave)

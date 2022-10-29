@@ -7,10 +7,6 @@ namespace GraveyardIdle.GraveSystem
 {
     public class GraveGround : MonoBehaviour
     {
-        // saves if grave is activated or not
-        // saves spent money into this grave space
-        // loads and sets spent money ui
-
         private Grave _grave;
 
         #region MONEY DATA
@@ -23,6 +19,7 @@ namespace GraveyardIdle.GraveSystem
 
         #region MONEY SPEND SECTION
         public bool PlayerIsInArea { get; private set; }
+        public Transform MoneySpendTransform { get; private set; }
         public bool MoneyCanBeSpent => DataManager.TotalMoney > 0 && _consumedMoney < _requiredMoney;
         #endregion
 
@@ -38,6 +35,7 @@ namespace GraveyardIdle.GraveSystem
                 _consumedMoney = 0;
 
                 PlayerIsInArea = false;
+                MoneySpendTransform = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0);
             }
 
             Load();

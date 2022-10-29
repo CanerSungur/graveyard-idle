@@ -12,7 +12,7 @@ namespace ZestGames
         [SerializeField] private Hud hud;
         [SerializeField] private LevelFail levelFail;
         [SerializeField] private LevelSuccess levelSuccess;
-        [SerializeField] private SettingsUi settings;
+        [SerializeField] private SettingsMinimalUi settings;
 
         [Header("-- UI DELAY SETUP --")]
         [SerializeField, Tooltip("The delay in seconds between the game is won and the win screen is loaded.")]
@@ -27,6 +27,7 @@ namespace ZestGames
             hud.Init(this);
             levelFail.Init(this);
             levelSuccess.Init(this);
+            settings.Init(this);
 
             touchToStart.gameObject.SetActive(true);
             hud.gameObject.SetActive(false);
