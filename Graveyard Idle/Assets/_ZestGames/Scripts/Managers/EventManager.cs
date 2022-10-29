@@ -61,6 +61,7 @@ namespace ZestGames
     {
         public static Action OnStartedWatering, OnStoppedWatering;
         public static Action<Grave> OnMaintenanceSuccessfull;
+        public static Action<GraveyardIdle.GraveSystem.FinishedGrave> OnMaintenanceIsSuccessfull;
     }
 
     public static class GraveEvents

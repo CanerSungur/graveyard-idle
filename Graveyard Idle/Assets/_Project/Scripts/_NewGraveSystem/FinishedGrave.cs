@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using ZestCore.Utility;
+using System;
 
 namespace GraveyardIdle.GraveSystem
 {
@@ -21,8 +23,22 @@ namespace GraveyardIdle.GraveSystem
         private int _currentLevel;
         #endregion
 
+        #region UPGRADE SECTION
+        private bool _playerIsInUpgradeArea, _playerIsInMaintenanceArea;
+        #endregion
+
         #region PUBLICS
         public Grave Grave => _grave;
+        public int CurrentLevel => _currentLevel;
+        public bool PlayerIsInUpgradeArea => _playerIsInUpgradeArea;
+        public bool PlayerIsInMaintenanceArea => _playerIsInMaintenanceArea;
+        public FinishedGraveUpgradeHandler UpgradeHandler => _upgradeHandler;
+        public FinishedGraveSpoilHandler SpoilHandler => _spoilHandler;
+        public FinishedGraveMoneyHandler MoneyHandler => _moneyHandler;
+        #endregion
+
+        #region EVENTS
+        public Action OnStartSpoiling, OnStopSpoiling;
         #endregion
 
         public void Init(Grave grave)
@@ -42,13 +58,34 @@ namespace GraveyardIdle.GraveSystem
             _upgradeHandler.Init(this);
             _moneyHandler.Init(this);
             _spoilHandler.Init(this);
-        }
 
+            _playerIsInUpgradeArea = _playerIsInMaintenanceArea = false;
+            CheckForUpgradeAreaActivation();
+        }
         private void OnDisable()
         {
             if (_grave == null) return;
             Save();
         }
+
+        #region PUBLICS
+        public void EnteredUpgradeArea() => _playerIsInUpgradeArea = true;
+        public void ExitedUpgradeArea() => _playerIsInUpgradeArea = false;
+        public void EnteredMaintenanceArea() => _playerIsInMaintenanceArea = true;
+        public void ExitedMaintenanceArea() => _playerIsInMaintenanceArea = false;
+        public void UpgradeLevel()
+        {
+            if (_currentLevel < MAX_LEVEL)
+            {
+                _currentLevel++;
+
+                // start closing current grave
+                DisableCurrentGravePiece();
+                // enable other grave with a delay(3 seconds)
+                Delayer.DoActionAfterDelay(this, 3f, EnableUpgradedGravePiece);
+            }
+        }
+        #endregion
 
         #region HELPERS
         private void InitializeGravePiecesDictionary()
@@ -67,7 +104,7 @@ namespace GraveyardIdle.GraveSystem
             if (_currentLevel == 1)
             {
                 gravePiece.gameObject.SetActive(true);
-                //gravePiece.Init(this);
+                gravePiece.Init(this);
             }
             else
             {
@@ -75,8 +112,28 @@ namespace GraveyardIdle.GraveSystem
                 previousGravePiece.gameObject.SetActive(false);
 
                 gravePiece.gameObject.SetActive(true);
-                //gravePiece.Init(this);
+                gravePiece.Init(this);
             }
+        }
+        private void CheckForUpgradeAreaActivation()
+        {
+            if (_currentLevel < MAX_LEVEL)
+                _upgradeHandler.EnableUpgradeArea();
+        }
+        private void DisableCurrentGravePiece()
+        {
+            _upgradeHandler.DisableUpgradeArea();
+            _gravePiecesDict[_currentLevel - 1].Disable();
+        }
+        private void EnableUpgradedGravePiece()
+        {
+            if (_currentLevel == MAX_LEVEL)
+                _upgradeHandler.DisableUpgradeArea();
+            else
+                _upgradeHandler.EnableUpgradeArea();
+
+            _gravePiecesDict[_currentLevel].gameObject.SetActive(true);
+            _gravePiecesDict[_currentLevel].Init(this);
         }
         #endregion
 
@@ -89,7 +146,6 @@ namespace GraveyardIdle.GraveSystem
         private void Load()
         {
             _currentLevel = PlayerPrefs.GetInt($"Grave-{_grave.ID}-CurrentLevel", 1);
-            _currentLevel = 5;
             EnableRelevantGravePiece();
         }
         #endregion

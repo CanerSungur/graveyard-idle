@@ -12,7 +12,8 @@ namespace GraveyardIdle
         private readonly WaitForSeconds _waitForSuccessRewardDelay = new WaitForSeconds(0.05f);
         private IEnumerator _wateringRewardCoroutine;
 
-        private readonly int _maintenanceRewardMoney = 10;
+        private const int MAX_MAINTENANCE_REWARD_MONEY= 10;
+        private int _currentMaintenanceRewardMoney = 0;
 
         public void Init(Player player)
         {
@@ -21,6 +22,7 @@ namespace GraveyardIdle
             WateringCanEvents.OnStartedWatering += StartRewarding;
             WateringCanEvents.OnStoppedWatering += StopRewarding;
             WateringCanEvents.OnMaintenanceSuccessfull += MaintenanceSuccessfull;
+            WateringCanEvents.OnMaintenanceIsSuccessfull += MaintenanceIsSuccessfull;
         }
 
         private void OnDisable()
@@ -30,21 +32,29 @@ namespace GraveyardIdle
             WateringCanEvents.OnStartedWatering -= StartRewarding;
             WateringCanEvents.OnStoppedWatering -= StopRewarding;
             WateringCanEvents.OnMaintenanceSuccessfull -= MaintenanceSuccessfull;
+            WateringCanEvents.OnMaintenanceIsSuccessfull -= MaintenanceIsSuccessfull;
         }
 
         private void StartRewarding()
         {
+            _currentMaintenanceRewardMoney = 0;
             _wateringRewardCoroutine = WateringRewardCoroutine();
             StartCoroutine(_wateringRewardCoroutine);
         }
         private void StopRewarding()
         {
+            _currentMaintenanceRewardMoney = 0;
             StopCoroutine(_wateringRewardCoroutine);
         }
         private void MaintenanceSuccessfull(Grave grave)
         {
             StopRewarding();
             // reward total money;
+            StartCoroutine(SpawnWateringFinishedRewardMoney());
+        }
+        private void MaintenanceIsSuccessfull(GraveyardIdle.GraveSystem.FinishedGrave finishedGrave)
+        {
+            StopRewarding();
             StartCoroutine(SpawnWateringFinishedRewardMoney());
         }
 
@@ -55,15 +65,18 @@ namespace GraveyardIdle
             {
                 yield return _waitForNormalRewardDelay;
                 MoneyCanvas.Instance.SpawnCollectMoney(transform);
+                _currentMaintenanceRewardMoney++;
             }
         }
         private IEnumerator SpawnWateringFinishedRewardMoney()
         {
-            int currentCount = 0;
-            while (currentCount < _maintenanceRewardMoney)
+            if (_currentMaintenanceRewardMoney >= MAX_MAINTENANCE_REWARD_MONEY)
+                _currentMaintenanceRewardMoney = MAX_MAINTENANCE_REWARD_MONEY;
+
+            while (_currentMaintenanceRewardMoney > 0)
             {
                 MoneyCanvas.Instance.SpawnCollectMoney(transform);
-                currentCount++;
+                _currentMaintenanceRewardMoney--;
 
                 yield return _waitForSuccessRewardDelay;
             }
@@ -74,6 +87,10 @@ namespace GraveyardIdle
         public void StartMaintenance(Grave grave)
         {
             grave.OnStopSpoiling?.Invoke();
+        }
+        public void StartMaintenance(GraveyardIdle.GraveSystem.FinishedGrave finishedGrave)
+        {
+            finishedGrave.OnStopSpoiling?.Invoke();
         }
         #endregion
     }

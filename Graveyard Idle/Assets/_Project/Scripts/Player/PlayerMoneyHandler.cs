@@ -47,6 +47,15 @@ namespace GraveyardIdle
                 UpdateMoneyValue();
             }
         }
+        private IEnumerator SpendMoney(FinishedGrave finishedGrave)
+        {
+            while (finishedGrave.UpgradeHandler.MoneyCanBeSpent)
+            {
+                finishedGrave.UpgradeHandler.ConsumeMoney(_currentMoneySpendValue);
+                yield return new WaitForSeconds(_currentSpendMoneyDelay);
+                UpdateMoneyValue();
+            }
+        }
 
         private IEnumerator SpendMoney(GraveUpgradeHandler graveUpgradeHandler)
         {
@@ -110,6 +119,17 @@ namespace GraveyardIdle
             // Start throwing money
             if (graveGround.MoneyCanBeSpent)
                 MoneyCanvas.Instance.StartSpendingMoney(graveGround);
+        }
+        public void StartSpending(FinishedGrave finishedGrave)
+        {
+            _spendMoneyEnum = SpendMoney(finishedGrave);
+            _currentSpendMoneyDelay = _startingSpendMoneyDelay;
+            _currentMoneySpendValue = DataManager.MoneyValue;
+            _moneySpendingCount = 0;
+            StartCoroutine(_spendMoneyEnum);
+
+            if (finishedGrave.UpgradeHandler.MoneyCanBeSpent)
+                MoneyCanvas.Instance.StartSpendingMoney(finishedGrave);
         }
 
         public void StartSpending(GraveUpgradeHandler graveUpgradeHandler)

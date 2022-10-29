@@ -12,10 +12,12 @@ namespace GraveyardIdle.GraveSystem
         [Header("-- CARRIER DROP SETUP --")]
         [SerializeField] private Transform carrierDropTransform;
 
+        #region CORE
         private GraveManager _graveManager;
         private Enums.GraveState _currentState;
         private int _id;
         private bool _activated;
+        #endregion
 
         #region COMPONENTS
         private Collider _collider;
@@ -65,12 +67,11 @@ namespace GraveyardIdle.GraveSystem
         }
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out Player player) && !_playerIsInArea && CanTakeCoffin && player.IsCarryingCoffin )
+            if (other.TryGetComponent(out Player player) && !_playerIsInArea && CanTakeCoffin && player.IsCarryingCoffin)
             {
                 _playerIsInArea = _hasCoffin = true;
                 _collider.enabled = false;
                 CoffinIsThrown();
-                // Throw Coffin here
                 player.TimerHandler.StartFilling(() => {
                     PlayerEvents.OnThrowCoffin?.Invoke(player.CoffinCarryingNow, this);
                     GraveManagerEvents.OnCoffinThrownToGrave?.Invoke();
@@ -120,7 +121,6 @@ namespace GraveyardIdle.GraveSystem
             #region INITIALIZE IF GAME IS RESTARTED
             if (GameManager.GameState == Enums.GameState.WaitingToStart)
             {
-                // For game initialization
                 _graveGround.gameObject.SetActive(false);
                 _soilDiggable.gameObject.SetActive(false);
                 _soilFillable.gameObject.SetActive(true);
@@ -169,6 +169,14 @@ namespace GraveyardIdle.GraveSystem
             _soilFillable.gameObject.SetActive(false);
             _finishedGrave.gameObject.SetActive(true);
             _finishedGrave.Init(this);
+
+            #region SPAWN MONEY ONLY ON GAMEPLAY NOT ON GAME INITIALIZATION
+            if (GameManager.GameState != Enums.GameState.WaitingToStart)
+            {
+                _finishedGrave.MoneyHandler.StartSpawningMoney();
+                AudioHandler.PlayAudio(Enums.AudioType.MoneySpawn);
+            }
+            #endregion
         }
         public void AssignCarriers() => _carrierAssigned = true;
         public void UnAssignCarriers() => _carrierAssigned = false;

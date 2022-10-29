@@ -64,16 +64,6 @@ namespace GraveyardIdle
                 _player.MoneyHandler.StartSpending(coffinCarrierUnlocker);
             }
 
-            if (other.gameObject.layer == LayerMask.NameToLayer("GraveUpgradeArea"))
-            {
-                GraveUpgradeHandler graveUpgradeHandler = other.GetComponentInParent<GraveUpgradeHandler>();
-                if (graveUpgradeHandler != null && !graveUpgradeHandler.Grave.PlayerIsInUpgradeArea && !graveUpgradeHandler.Grave.PlayerIsInMaintenanceArea && _player.MoneyHandler.CanSpendMoney)
-                {
-                    graveUpgradeHandler.PlayerStartedUpgrading();
-                    _player.MoneyHandler.StartSpending(graveUpgradeHandler);
-                }
-            }
-
             if (other.TryGetComponent(out BuyCoffinArea buyCoffinArea) && !buyCoffinArea.PlayerIsInArea)
             {
                 buyCoffinArea.PlayerIsInArea = true;
@@ -94,19 +84,43 @@ namespace GraveyardIdle
                 }
             }
 
-            if (other.TryGetComponent(out Grave grave) && grave.SpoilHandler.IsSpoiling && !grave.PlayerIsInMaintenanceArea && !Player.IsMaintenancing && !_player.IsCarryingCoffin)
-            {
-                PlayerEvents.OnStartedMaintenance?.Invoke();
-                WateringCanEvents.OnStartedWatering?.Invoke();
-                grave.PlayerIsInMaintenanceArea = true;
-                _player.MaintenanceHandler.StartMaintenance(grave);
-            }
+            //if (other.TryGetComponent(out Grave grave) && grave.SpoilHandler.IsSpoiling && !grave.PlayerIsInMaintenanceArea && !Player.IsMaintenancing && !_player.IsCarryingCoffin)
+            //{
+            //    PlayerEvents.OnStartedMaintenance?.Invoke();
+            //    WateringCanEvents.OnStartedWatering?.Invoke();
+            //    grave.PlayerIsInMaintenanceArea = true;
+            //    _player.MaintenanceHandler.StartMaintenance(grave);
+            //}
 
             #region NEW GRAVE SYSTEM
             if (other.TryGetComponent(out GraveGround graveGround) && !graveGround.PlayerIsInArea && _player.MoneyHandler.CanSpendMoney)
             {
                 graveGround.PlayerGetsIn();
                 _player.MoneyHandler.StartSpending(graveGround);
+            }
+            if (other.gameObject.layer == LayerMask.NameToLayer("GraveUpgradeArea"))
+            {
+                FinishedGrave finishedGrave = other.GetComponentInParent<FinishedGrave>();
+                if (!finishedGrave.PlayerIsInUpgradeArea && !finishedGrave.PlayerIsInMaintenanceArea && _player.MoneyHandler.CanSpendMoney)
+                {
+                    finishedGrave.EnteredUpgradeArea();
+                    //finishedGrave.UpgradeLevel();
+                    _player.MoneyHandler.StartSpending(finishedGrave);
+                }
+
+                //GraveUpgradeHandler graveUpgradeHandler = other.GetComponentInParent<GraveUpgradeHandler>();
+                //if (graveUpgradeHandler != null && !graveUpgradeHandler.Grave.PlayerIsInUpgradeArea && !graveUpgradeHandler.Grave.PlayerIsInMaintenanceArea && _player.MoneyHandler.CanSpendMoney)
+                //{
+                //    graveUpgradeHandler.PlayerStartedUpgrading();
+                //    _player.MoneyHandler.StartSpending(graveUpgradeHandler);
+                //}
+            }
+            if (other.TryGetComponent(out FinishedGrave finishedGraveForMaintenance) && finishedGraveForMaintenance.SpoilHandler.IsSpoiling && !finishedGraveForMaintenance.PlayerIsInMaintenanceArea && !Player.IsMaintenancing && !_player.IsCarryingCoffin)
+            {
+                PlayerEvents.OnStartedMaintenance?.Invoke();
+                WateringCanEvents.OnStartedWatering?.Invoke();
+                finishedGraveForMaintenance.EnteredMaintenanceArea();
+                _player.MaintenanceHandler.StartMaintenance(finishedGraveForMaintenance);
             }
             #endregion
         }
@@ -142,35 +156,47 @@ namespace GraveyardIdle
                 _player.MoneyHandler.StopSpending();
             }
 
-            if (other.gameObject.layer == LayerMask.NameToLayer("GraveUpgradeArea"))
-            {
-                GraveUpgradeHandler graveUpgradeHandler = other.GetComponentInParent<GraveUpgradeHandler>();
-                if (graveUpgradeHandler != null && graveUpgradeHandler.Grave.PlayerIsInUpgradeArea)
-                {
-                    graveUpgradeHandler.PlayerStoppedUpgrading();
-                    _player.MoneyHandler.StopSpending();
-                }
-            }
-
             if (other.TryGetComponent(out BuyCoffinArea buyCoffinArea) && buyCoffinArea.PlayerIsInArea)
             {
                 buyCoffinArea.PlayerIsInArea = false;
                 _player.MoneyHandler.StopSpending();
             }
 
-            if (other.TryGetComponent(out Grave grave) && grave.SpoilHandler.CanSpoil && grave.PlayerIsInMaintenanceArea)
-            {
-                PlayerEvents.OnStoppedMaintenance?.Invoke();
-                WateringCanEvents.OnStoppedWatering?.Invoke();
-                grave.PlayerIsInMaintenanceArea = false;
-                //grave.OnStartSpoiling?.Invoke();
-            }
+            //if (other.TryGetComponent(out Grave grave) && grave.SpoilHandler.CanSpoil && grave.PlayerIsInMaintenanceArea)
+            //{
+            //    PlayerEvents.OnStoppedMaintenance?.Invoke();
+            //    WateringCanEvents.OnStoppedWatering?.Invoke();
+            //    grave.PlayerIsInMaintenanceArea = false;
+            //    //grave.OnStartSpoiling?.Invoke();
+            //}
 
             #region NEW GRAVE SYSTEM
             if (other.TryGetComponent(out GraveGround graveGround) && graveGround.PlayerIsInArea)
             {
                 graveGround.PlayerGetsOut();
                 _player.MoneyHandler.StopSpending();
+            }
+            if (other.gameObject.layer == LayerMask.NameToLayer("GraveUpgradeArea"))
+            {
+                FinishedGrave finishedGrave = other.GetComponentInParent<FinishedGrave>();
+                if (finishedGrave.PlayerIsInUpgradeArea)
+                {
+                    finishedGrave.ExitedUpgradeArea();
+                    _player.MoneyHandler.StopSpending();
+                }
+
+                //GraveUpgradeHandler graveUpgradeHandler = other.GetComponentInParent<GraveUpgradeHandler>();
+                //if (graveUpgradeHandler != null && graveUpgradeHandler.Grave.PlayerIsInUpgradeArea)
+                //{
+                //    graveUpgradeHandler.PlayerStoppedUpgrading();
+                //    _player.MoneyHandler.StopSpending();
+                //}
+            }
+            if (other.TryGetComponent(out FinishedGrave finishedGraveForMaintenance) && finishedGraveForMaintenance.PlayerIsInMaintenanceArea)
+            {
+                PlayerEvents.OnStoppedMaintenance?.Invoke();
+                WateringCanEvents.OnStoppedWatering?.Invoke();
+                finishedGraveForMaintenance.ExitedMaintenanceArea();
             }
             #endregion
         }

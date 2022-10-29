@@ -12,6 +12,7 @@ namespace GraveyardIdle
         private Camera _camera;
         private Vector2 _currentPosition;
         private GraveGround _graveGround = null;
+        private FinishedGrave _finishedGrave = null;
         private InteractableGroundCanvas _interactableGroundCanvas = null;
         private GraveUpgradeHandler _graveUpgradeHandler = null;
         private BuyCoffinArea _buyCoffinArea = null;
@@ -29,6 +30,21 @@ namespace GraveyardIdle
             }
 
             _graveGround = graveGround;
+            _disableTime = Time.time + 0.9f;
+            _currentPosition = Hud.MoneyAnchoredPosition;
+            _rectTransform.anchoredPosition = _currentPosition;
+        }
+        public void Init(MoneyCanvas moneyCanvas, FinishedGrave finishedGrave)
+        {
+            if (!_moneyCanvas)
+            {
+                _moneyCanvas = moneyCanvas;
+                _canvasRect = _moneyCanvas.GetComponent<RectTransform>();
+                _rectTransform = GetComponent<RectTransform>();
+                _camera = Camera.main;
+            }
+
+            _finishedGrave = finishedGrave;
             _disableTime = Time.time + 0.9f;
             _currentPosition = Hud.MoneyAnchoredPosition;
             _rectTransform.anchoredPosition = _currentPosition;
@@ -119,6 +135,19 @@ namespace GraveyardIdle
                 if (Time.time >= _disableTime)
                     gameObject.SetActive(false);
             }
+            if (_finishedGrave)
+            {
+                Vector2 travel = GetWorldPointToScreenPoint(_finishedGrave.UpgradeHandler.MoneyImageTransform) - _rectTransform.anchoredPosition;
+                _rectTransform.Translate(travel * 10f * Time.deltaTime, _camera.transform);
+
+                if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_finishedGrave.UpgradeHandler.MoneyImageTransform)) < 25f)
+                {
+                    gameObject.SetActive(false);
+                }
+
+                if (Time.time >= _disableTime)
+                    gameObject.SetActive(false);
+            }
 
             if (_buyCoffinArea)
             {
@@ -134,34 +163,34 @@ namespace GraveyardIdle
                     gameObject.SetActive(false);
             }
 
-            if (_interactableGroundCanvas)
-            {
-                Vector2 travel = GetWorldPointToScreenPoint(_interactableGroundCanvas.transform) - _rectTransform.anchoredPosition;
-                _rectTransform.Translate(travel * 10f * Time.deltaTime, _camera.transform);
+            //if (_interactableGroundCanvas)
+            //{
+            //    Vector2 travel = GetWorldPointToScreenPoint(_interactableGroundCanvas.transform) - _rectTransform.anchoredPosition;
+            //    _rectTransform.Translate(travel * 10f * Time.deltaTime, _camera.transform);
 
-                if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_interactableGroundCanvas.transform)) < 25f)
-                {
-                    gameObject.SetActive(false);
-                }
+            //    if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_interactableGroundCanvas.transform)) < 25f)
+            //    {
+            //        gameObject.SetActive(false);
+            //    }
 
-                if (Time.time >= _disableTime)
-                    gameObject.SetActive(false);
-            }
+            //    if (Time.time >= _disableTime)
+            //        gameObject.SetActive(false);
+            //}
 
-            if (_graveUpgradeHandler)
-            {
-                Vector2 travel = GetWorldPointToScreenPoint(_graveUpgradeHandler.UpgradeArea.transform) - _rectTransform.anchoredPosition;
-                _rectTransform.Translate(travel * 10f * Time.deltaTime, _camera.transform);
+            //if (_graveUpgradeHandler)
+            //{
+            //    Vector2 travel = GetWorldPointToScreenPoint(_graveUpgradeHandler.UpgradeArea.transform) - _rectTransform.anchoredPosition;
+            //    _rectTransform.Translate(travel * 10f * Time.deltaTime, _camera.transform);
 
 
-                if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_graveUpgradeHandler.UpgradeArea.transform)) < 25f)
-                {
-                    gameObject.SetActive(false);
-                }
+            //    if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_graveUpgradeHandler.UpgradeArea.transform)) < 25f)
+            //    {
+            //        gameObject.SetActive(false);
+            //    }
 
-                if (Time.time >= _disableTime)
-                    gameObject.SetActive(false);
-            }
+            //    if (Time.time >= _disableTime)
+            //        gameObject.SetActive(false);
+            //}
 
             if (_coffinCarriersUnlocker)
             {

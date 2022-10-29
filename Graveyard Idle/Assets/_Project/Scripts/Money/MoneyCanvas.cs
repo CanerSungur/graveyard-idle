@@ -34,6 +34,11 @@ namespace GraveyardIdle
             SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
             money.Init(this, graveGround);
         }
+        public void SpawnSpendMoney(FinishedGrave finishedGrave)
+        {
+            SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
+            money.Init(this, finishedGrave);
+        }
         public void SpawnSpendMoney(GraveUpgradeHandler graveUpgradeHandler)
         {
             SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
@@ -71,6 +76,15 @@ namespace GraveyardIdle
             {
                 SpendMoneyEnumIsPlaying = true;
                 _spendMoneyEnum = SpendMoney(graveGround);
+                StartCoroutine(_spendMoneyEnum);
+            }
+        }
+        public void StartSpendingMoney(FinishedGrave finishedGrave)
+        {
+            if (finishedGrave.UpgradeHandler.MoneyCanBeSpent)
+            {
+                SpendMoneyEnumIsPlaying = true;
+                _spendMoneyEnum = SpendMoney(finishedGrave);
                 StartCoroutine(_spendMoneyEnum);
             }
         }
@@ -129,6 +143,15 @@ namespace GraveyardIdle
             while (graveGround.MoneyCanBeSpent && graveGround.gameObject.activeSelf)
             {
                 SpawnSpendMoney(graveGround);
+                AudioEvents.OnPlaySpendMoney?.Invoke();
+                yield return _waitforSpendMoneyDelay;
+            }
+        }
+        private IEnumerator SpendMoney(FinishedGrave finishedGrave)
+        {
+            while (finishedGrave.UpgradeHandler.MoneyCanBeSpent)
+            {
+                SpawnSpendMoney(finishedGrave);
                 AudioEvents.OnPlaySpendMoney?.Invoke();
                 yield return _waitforSpendMoneyDelay;
             }
