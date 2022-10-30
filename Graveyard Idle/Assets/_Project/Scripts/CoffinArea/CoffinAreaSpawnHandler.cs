@@ -45,14 +45,25 @@ namespace GraveyardIdle
                     TruckEvents.OnEnableTruck?.Invoke(_coffinArea);
                     GraveManagerEvents.OnCoffinSpawned?.Invoke();
                     GraveManagerEvents.OnCheckForCarrierActivation?.Invoke();
-                    //Coffin coffin = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.Coffin, spawnTransform.position, Quaternion.Euler(0f, 90f, 0f)).GetComponent<Coffin>();
-                    //coffin.Init(this);
-                    //coffin.GetStacked(_coffinArea.StackHandler.TargetStackPosition, _coffinArea.StackHandler.StackContainer);
-                    //CoffinAreaStackHandler.AddCoffin(coffin);
                 }
 
                 yield return _waitForSpawnDelay;
             }
         }
+
+        #region PUBLICS
+        public void SpawnCoffinForInit()
+        {
+            Coffin coffin = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.Coffin, Vector3.zero, Quaternion.identity).GetComponent<Coffin>();
+            coffin.Init(this);
+            coffin.transform.SetParent(_coffinArea.StackHandler.StackContainer);
+            coffin.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+            coffin.transform.localPosition = _coffinArea.StackHandler.TargetStackPosition;
+
+            CoffinAreaStackHandler.AddCoffin(coffin);
+            CoffinAreaEvents.OnStackedCoffin?.Invoke();
+            //GraveManagerEvents.OnCoffinSpawned?.Invoke();
+        }
+        #endregion
     }
 }

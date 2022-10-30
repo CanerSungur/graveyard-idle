@@ -84,11 +84,9 @@ namespace GraveyardIdle
                         DeleteGetThrownSequence();
                         Delayer.DoActionAfterDelay(this, 1f, () => CoffinCarrierEvents.OnReturnToWaitingPosition?.Invoke());
                         _coffin.GetThrownToGraveByCarriers(_graveToBeDropped.transform);
+                        _graveToBeDropped.CoffinThrownByCarriers();
 
-                        //_graveToBeDropped.InteractableGround.HasCoffin = true;
-                        //_graveToBeDropped.InteractableGround.CanBeThrownCoffin = false;
                         GraveManagerEvents.OnCoffinThrownToGrave?.Invoke();
-                        //GraveManager.RemoveEmptyGrave(_graveToBeDropped);
                     });
             }
         }

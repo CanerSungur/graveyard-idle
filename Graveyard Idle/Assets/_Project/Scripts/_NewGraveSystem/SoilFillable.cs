@@ -64,6 +64,7 @@ namespace GraveyardIdle.GraveSystem
             if (other.TryGetComponent(out Player player) && !_playerIsInArea && _currentFillCount < TOTAL_FILL_COUNT && _grave.HasCoffin)
             {
                 _playerIsInArea = true;
+                PlayerEvents.OnStartFilling?.Invoke();
                 PlayerEvents.OnEnteredFillZone?.Invoke();
                 PlayerEvents.OnPullOutShovel?.Invoke();
             }
@@ -73,6 +74,7 @@ namespace GraveyardIdle.GraveSystem
             if (other.TryGetComponent(out Player player) && _playerIsInArea)
             {
                 _playerIsInArea = false;
+                PlayerEvents.OnStopFilling?.Invoke();
                 PlayerEvents.OnExitedFillZone?.Invoke();
                 PlayerEvents.OnPutDownShovel?.Invoke();
             }

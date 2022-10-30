@@ -2,6 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 using UnityEngine.UI;
+using ZestGames;
 
 namespace GraveyardIdle
 {
@@ -34,6 +35,7 @@ namespace GraveyardIdle
 
         private void DoAction()
         {
+            AudioHandler.PlayAudio(Enums.AudioType.Action);
             _currentAction?.Invoke();
             _currentAction = null;
         }

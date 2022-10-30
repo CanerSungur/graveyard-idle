@@ -64,6 +64,17 @@ namespace GraveyardIdle
             InitCarrierHandles();
         }
 
+        public void Init(CoffinAreaSpawnHandler coffinAreaSpawnHandler)
+        {
+            IsBeingCarried = false;
+            Rigidbody.isKinematic = true;
+
+            MovementHandler.Init(this);
+            AnimationController.Init(this);
+
+            InitCarrierHandles();
+        }
+
         #region CARRIER HANDLE FUNCTIONS
         private void InitCarrierHandles()
         {

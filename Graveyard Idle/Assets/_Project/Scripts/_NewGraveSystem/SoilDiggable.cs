@@ -48,7 +48,6 @@ namespace GraveyardIdle.GraveSystem
             Load();
 
             ShovelEvents.OnDigHappened += GetDigged;
-            Debug.Log("initialized");
         }
 
         #region MONO FUNCTIONS
@@ -65,6 +64,7 @@ namespace GraveyardIdle.GraveSystem
             if (other.TryGetComponent(out Player player) && !_playerIsInArea && _currentDigCount < TOTAL_DIG_COUNT)
             {
                 _playerIsInArea = true;
+                PlayerEvents.OnStartDigging?.Invoke();
                 PlayerEvents.OnEnteredDigZone?.Invoke();
                 PlayerEvents.OnPullOutShovel?.Invoke();
             }
@@ -74,6 +74,7 @@ namespace GraveyardIdle.GraveSystem
             if (other.TryGetComponent(out Player player) && _playerIsInArea)
             {
                 _playerIsInArea = false;
+                PlayerEvents.OnStopDigging?.Invoke();
                 PlayerEvents.OnExitedDigZone?.Invoke();
                 PlayerEvents.OnPutDownShovel?.Invoke();
             }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using ZestCore.Utility;
 using ZestGames;
 
 namespace GraveyardIdle
@@ -30,8 +31,12 @@ namespace GraveyardIdle
         public int ColumnLength { get; private set; }
         #endregion
 
+        #region STATICS
         public static Transform[] CarrierTakeTransforms;
         public static Transform CoffinThrowPointForCarriers;
+        #endregion
+
+        private int _coffinCount;
 
         private void Start()
         {
@@ -49,14 +54,19 @@ namespace GraveyardIdle
 
             CoffinAreaEvents.OnStackedCoffin += HandleCoffinStack;
             CoffinAreaEvents.OnUnStackedCoffin += HandleCoffinUnStack;
+
+            Delayer.DoActionAfterDelay(this, 0.5f, Load);
         }
 
         private void OnDisable()
         {
             CoffinAreaEvents.OnStackedCoffin -= HandleCoffinStack;
             CoffinAreaEvents.OnUnStackedCoffin -= HandleCoffinUnStack;
+
+            Save();
         }
 
+        #region EVENT HANDLER FUNCTIONS
         private void HandleCoffinStack()
         {
             CurrentCount++;
@@ -93,6 +103,29 @@ namespace GraveyardIdle
 
             CurrentCount--;
             CurrentRowCount--;
+            _coffinCount--;
         }
+        #endregion
+
+        #region SAVE-LOAD FUNCTIONS
+        private void Save()
+        {
+            _coffinCount = CurrentCount;
+            PlayerPrefs.SetInt("CoffinArea_CoffinCount", _coffinCount);
+            PlayerPrefs.Save();
+        }
+        private void Load()
+        {
+            _coffinCount = PlayerPrefs.GetInt("CoffinArea_CoffinCount", 0);
+
+            if (_coffinCount <= 0) return;
+
+            for (int i = 0; i < _coffinCount; i++)
+            {
+                SpawnHandler.SpawnCoffinForInit();
+                GraveManagerEvents.OnCheckForCarrierActivation?.Invoke();
+            }
+        }
+        #endregion
     }
 }

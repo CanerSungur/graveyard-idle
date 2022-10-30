@@ -67,12 +67,14 @@ namespace GraveyardIdle.GraveSystem
         }
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out Player player) && !_playerIsInArea && CanTakeCoffin && player.IsCarryingCoffin)
+            if (other.TryGetComponent(out Player player) && !_playerIsInArea && CanTakeCoffin && player.IsCarryingCoffin && !_carrierAssigned)
             {
-                _playerIsInArea = _hasCoffin = true;
-                _collider.enabled = false;
-                CoffinIsThrown();
+                _playerIsInArea = true;
+                
                 player.TimerHandler.StartFilling(() => {
+                    _hasCoffin = true;
+                    _collider.enabled = false;
+                    CoffinIsThrown();
                     PlayerEvents.OnThrowCoffin?.Invoke(player.CoffinCarryingNow, this);
                     GraveManagerEvents.OnCoffinThrownToGrave?.Invoke();
                 });
@@ -104,7 +106,7 @@ namespace GraveyardIdle.GraveSystem
         }
         private void IsNotActivated()
         {
-            Debug.Log("Grave no-" + ID + "is not activated");
+            //Debug.Log("Grave no-" + ID + "is not activated");
             _graveGround.gameObject.SetActive(true);
             _soilDiggable.gameObject.SetActive(false);
             _soilFillable.gameObject.SetActive(false);
@@ -115,7 +117,7 @@ namespace GraveyardIdle.GraveSystem
         {
             _graveManager.RemoveEmptyGrave(this);
 
-            Debug.Log("Grave No-" + ID + " is waiting to be filled");
+            //Debug.Log("Grave No-" + ID + " is waiting to be filled");
             _currentState = Enums.GraveState.WaitingToBeFilled;
 
             #region INITIALIZE IF GAME IS RESTARTED
@@ -132,11 +134,17 @@ namespace GraveyardIdle.GraveSystem
         #endregion
 
         #region PUBLICS
+        public void CoffinThrownByCarriers()
+        {
+            _hasCoffin = true;
+            _collider.enabled = false;
+            CoffinIsThrown();
+        }
         public void ActivateGraveGround(GraveGround graveGround)
         {
             GraveManagerEvents.OnGraveActivated?.Invoke();
 
-            Debug.Log("Activated grave no-" + ID);
+            //Debug.Log("Activated grave no-" + ID);
             _currentState = Enums.GraveState.Activated;
             _graveGround.gameObject.SetActive(false);
             _soilDiggable.gameObject.SetActive(true);
@@ -152,7 +160,7 @@ namespace GraveyardIdle.GraveSystem
             _graveManager.AddEmptyGrave(this);
             GraveManagerEvents.OnCheckForCarrierActivation?.Invoke();
 
-            Debug.Log("Grave no-" + ID + " is waiting for coffin");
+            //Debug.Log("Grave no-" + ID + " is waiting for coffin");
             _currentState = Enums.GraveState.Dug;
             _graveGround.gameObject.SetActive(false);
             _soilDiggable.gameObject.SetActive(false);
@@ -162,7 +170,7 @@ namespace GraveyardIdle.GraveSystem
         }
         public void FillingIsCompleted()
         {
-            Debug.Log("Grave No-" + ID + " is finished. Calculate its level");
+            //Debug.Log("Grave No-" + ID + " is finished. Calculate its level");
             _currentState = Enums.GraveState.Completed;
             _graveGround.gameObject.SetActive(false);
             _soilDiggable.gameObject.SetActive(false);
@@ -178,13 +186,22 @@ namespace GraveyardIdle.GraveSystem
             }
             #endregion
         }
-        public void AssignCarriers() => _carrierAssigned = true;
+        public void AssignCarriers()
+        {
+            _carrierAssigned = true;
+            _hasCoffin = true;
+        }
         public void UnAssignCarriers() => _carrierAssigned = false;
         #endregion
 
         #region SAVE-LOAD FUNCTIONS
         private void Save()
         {
+            // if player quits game while carriers are carrying coffin to grave and not threw it yet,
+            // we accept it as coffin is thrown successfully
+            if (_currentState == Enums.GraveState.Dug && _hasCoffin)
+                CoffinIsThrown();
+
             PlayerPrefs.SetInt($"Grave-{_id}-State", (int)_currentState);
             PlayerPrefs.Save();
         }

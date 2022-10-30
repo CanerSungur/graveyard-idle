@@ -83,10 +83,10 @@ namespace GraveyardIdle
         #endregion
 
         #region PUBLICS
-        public void StartMaintenance(Grave grave)
-        {
-            grave.OnStopSpoiling?.Invoke();
-        }
+        //public void StartMaintenance(Grave grave)
+        //{
+        //    grave.OnStopSpoiling?.Invoke();
+        //}
         public void StartMaintenance(GraveyardIdle.GraveSystem.FinishedGrave finishedGrave)
         {
             finishedGrave.OnStopSpoiling?.Invoke();

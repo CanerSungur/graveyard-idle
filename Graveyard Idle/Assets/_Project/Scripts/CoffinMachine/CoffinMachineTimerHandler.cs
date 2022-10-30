@@ -58,6 +58,7 @@ namespace GraveyardIdle
                     }))
                     .Append(timerCanvas.DOScale(Vector3.zero, 0.2f)).OnComplete(() => {
                         DeleteFillSequence();
+                        _coffinMachine.BuyCoffinArea.ActivateCanvas();
                         //_coffinMachine.SpawnACoffin();
                         //_coffinMachine.BuyCoffinArea.ActivateCanvas();
                     });

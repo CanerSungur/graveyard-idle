@@ -7,8 +7,11 @@ namespace GraveyardIdle
 {
     public class PopupManager : MonoBehaviour
     {
+        private bool _isPlaying;
+
         public void Init(GameManager gameManager)
         {
+            _isPlaying = false;
             UiEvents.OnPopupText += Popup;
         }
 
@@ -19,9 +22,17 @@ namespace GraveyardIdle
 
         private void Popup(Vector3 position, string message)
         {
-            GameObject popup = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.PopupText, position, Quaternion.identity);
-            popup.GetComponentInChildren<TextMeshProUGUI>().text = message;
-            Delayer.DoActionAfterDelay(this, 2f, () => popup.SetActive(false));
+            if (!_isPlaying)
+            {
+                _isPlaying = true;
+
+                GameObject popup = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.PopupText, position, Quaternion.identity);
+                popup.GetComponentInChildren<TextMeshProUGUI>().text = message;
+                Delayer.DoActionAfterDelay(this, 2f, () => {
+                    _isPlaying = false;
+                    popup.SetActive(false);
+                });
+            }
         }
     }
 }

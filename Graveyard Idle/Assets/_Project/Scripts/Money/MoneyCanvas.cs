@@ -54,24 +54,24 @@ namespace GraveyardIdle
             }
         }
 
-        public void StartSpendingMoney(GraveUpgradeHandler graveUpgradeHandler)
-        {
-            if (graveUpgradeHandler.MoneyCanBeSpent)
-            {
-                SpendMoneyEnumIsPlaying = true;
-                _spendMoneyEnum = SpendMoney(graveUpgradeHandler);
-                StartCoroutine(_spendMoneyEnum);
-            }
-        }
-        public void StartSpendingMoney(InteractableGroundCanvas interactableGroundCanvas)
-        {
-            if (interactableGroundCanvas.MoneyCanBeSpent)
-            {
-                SpendMoneyEnumIsPlaying = true;
-                _spendMoneyEnum = SpendMoney(interactableGroundCanvas);
-                StartCoroutine(_spendMoneyEnum);
-            }
-        }
+        //public void StartSpendingMoney(GraveUpgradeHandler graveUpgradeHandler)
+        //{
+        //    if (graveUpgradeHandler.MoneyCanBeSpent)
+        //    {
+        //        SpendMoneyEnumIsPlaying = true;
+        //        _spendMoneyEnum = SpendMoney(graveUpgradeHandler);
+        //        StartCoroutine(_spendMoneyEnum);
+        //    }
+        //}
+        //public void StartSpendingMoney(InteractableGroundCanvas interactableGroundCanvas)
+        //{
+        //    if (interactableGroundCanvas.MoneyCanBeSpent)
+        //    {
+        //        SpendMoneyEnumIsPlaying = true;
+        //        _spendMoneyEnum = SpendMoney(interactableGroundCanvas);
+        //        StartCoroutine(_spendMoneyEnum);
+        //    }
+        //}
         public void StartSpendingMoney(BuyCoffinArea buyCoffinArea)
         {
             if (buyCoffinArea.MoneyCanBeSpent)
@@ -122,24 +122,24 @@ namespace GraveyardIdle
             }
         }
 
-        private IEnumerator SpendMoney(GraveUpgradeHandler graveUpgradeHandler)
-        {
-            while (graveUpgradeHandler.MoneyCanBeSpent && graveUpgradeHandler.gameObject.activeSelf)
-            {
-                SpawnSpendMoney(graveUpgradeHandler.UpgradeArea.transform);
-                AudioEvents.OnPlaySpendMoney?.Invoke();
-                yield return _waitforSpendMoneyDelay;
-            }
-        }
-        private IEnumerator SpendMoney(InteractableGroundCanvas interactableGroundCanvas)
-        {
-            while (interactableGroundCanvas.MoneyCanBeSpent && interactableGroundCanvas.gameObject.activeSelf)
-            {
-                SpawnSpendMoney(interactableGroundCanvas.transform);
-                AudioEvents.OnPlaySpendMoney?.Invoke();
-                yield return _waitforSpendMoneyDelay;
-            }
-        }
+        //private IEnumerator SpendMoney(GraveUpgradeHandler graveUpgradeHandler)
+        //{
+        //    while (graveUpgradeHandler.MoneyCanBeSpent && graveUpgradeHandler.gameObject.activeSelf)
+        //    {
+        //        SpawnSpendMoney(graveUpgradeHandler.UpgradeArea.transform);
+        //        AudioEvents.OnPlaySpendMoney?.Invoke();
+        //        yield return _waitforSpendMoneyDelay;
+        //    }
+        //}
+        //private IEnumerator SpendMoney(InteractableGroundCanvas interactableGroundCanvas)
+        //{
+        //    while (interactableGroundCanvas.MoneyCanBeSpent && interactableGroundCanvas.gameObject.activeSelf)
+        //    {
+        //        SpawnSpendMoney(interactableGroundCanvas.transform);
+        //        AudioEvents.OnPlaySpendMoney?.Invoke();
+        //        yield return _waitforSpendMoneyDelay;
+        //    }
+        //}
         private IEnumerator SpendMoney(BuyCoffinArea buyCoffinArea)
         {
             while (buyCoffinArea.MoneyCanBeSpent && buyCoffinArea.gameObject.activeSelf)

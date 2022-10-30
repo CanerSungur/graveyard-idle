@@ -57,26 +57,26 @@ namespace GraveyardIdle
             }
         }
 
-        private IEnumerator SpendMoney(GraveUpgradeHandler graveUpgradeHandler)
-        {
-            while (graveUpgradeHandler.MoneyCanBeSpent)
-            {
-                graveUpgradeHandler.ConsumeMoney(_currentMoneySpendValue);
-                yield return new WaitForSeconds(_currentSpendMoneyDelay);
-                //DecreaseMoneyDelay();
-                UpdateMoneyValue();
-            }
-        }
-        private IEnumerator SpendMoney(InteractableGroundCanvas interactableGroundCanvas)
-        {
-            while (interactableGroundCanvas.MoneyCanBeSpent)
-            {
-                interactableGroundCanvas.ConsumeMoney(_currentMoneySpendValue);
-                yield return new WaitForSeconds(_currentSpendMoneyDelay);
-                //DecreaseMoneyDelay();
-                UpdateMoneyValue();
-            }
-        }
+        //private IEnumerator SpendMoney(GraveUpgradeHandler graveUpgradeHandler)
+        //{
+        //    while (graveUpgradeHandler.MoneyCanBeSpent)
+        //    {
+        //        graveUpgradeHandler.ConsumeMoney(_currentMoneySpendValue);
+        //        yield return new WaitForSeconds(_currentSpendMoneyDelay);
+        //        //DecreaseMoneyDelay();
+        //        UpdateMoneyValue();
+        //    }
+        //}
+        //private IEnumerator SpendMoney(InteractableGroundCanvas interactableGroundCanvas)
+        //{
+        //    while (interactableGroundCanvas.MoneyCanBeSpent)
+        //    {
+        //        interactableGroundCanvas.ConsumeMoney(_currentMoneySpendValue);
+        //        yield return new WaitForSeconds(_currentSpendMoneyDelay);
+        //        //DecreaseMoneyDelay();
+        //        UpdateMoneyValue();
+        //    }
+        //}
         private IEnumerator SpendMoney(BuyCoffinArea buyCoffinArea)
         {
             while (buyCoffinArea.MoneyCanBeSpent)
@@ -132,18 +132,18 @@ namespace GraveyardIdle
                 MoneyCanvas.Instance.StartSpendingMoney(finishedGrave);
         }
 
-        public void StartSpending(GraveUpgradeHandler graveUpgradeHandler)
-        {
-            _spendMoneyEnum = SpendMoney(graveUpgradeHandler);
-            _currentSpendMoneyDelay = _startingSpendMoneyDelay;
-            _currentMoneySpendValue = DataManager.MoneyValue;
-            _moneySpendingCount = 0;
-            StartCoroutine(_spendMoneyEnum);
+        //public void StartSpending(GraveUpgradeHandler graveUpgradeHandler)
+        //{
+        //    _spendMoneyEnum = SpendMoney(graveUpgradeHandler);
+        //    _currentSpendMoneyDelay = _startingSpendMoneyDelay;
+        //    _currentMoneySpendValue = DataManager.MoneyValue;
+        //    _moneySpendingCount = 0;
+        //    StartCoroutine(_spendMoneyEnum);
 
-            // Start throwing money
-            if (graveUpgradeHandler.MoneyCanBeSpent)
-                MoneyCanvas.Instance.StartSpendingMoney(graveUpgradeHandler);
-        }
+        //    // Start throwing money
+        //    if (graveUpgradeHandler.MoneyCanBeSpent)
+        //        MoneyCanvas.Instance.StartSpendingMoney(graveUpgradeHandler);
+        //}
         public void StopSpending()
         {
             StopCoroutine(_spendMoneyEnum);
@@ -151,18 +151,18 @@ namespace GraveyardIdle
             // Stop throwing money
             MoneyCanvas.Instance.StopSpendingMoney();
         }
-        public void StartSpending(InteractableGroundCanvas interactableGroundCanvas)
-        {
-            _spendMoneyEnum = SpendMoney(interactableGroundCanvas);
-            _currentSpendMoneyDelay = _startingSpendMoneyDelay;
-            _currentMoneySpendValue = DataManager.MoneyValue;
-            _moneySpendingCount = 0;
-            StartCoroutine(_spendMoneyEnum);
+        //public void StartSpending(InteractableGroundCanvas interactableGroundCanvas)
+        //{
+        //    _spendMoneyEnum = SpendMoney(interactableGroundCanvas);
+        //    _currentSpendMoneyDelay = _startingSpendMoneyDelay;
+        //    _currentMoneySpendValue = DataManager.MoneyValue;
+        //    _moneySpendingCount = 0;
+        //    StartCoroutine(_spendMoneyEnum);
 
-            // Start throwing money
-            if (interactableGroundCanvas.MoneyCanBeSpent)
-                MoneyCanvas.Instance.StartSpendingMoney(interactableGroundCanvas);
-        }
+        //    // Start throwing money
+        //    if (interactableGroundCanvas.MoneyCanBeSpent)
+        //        MoneyCanvas.Instance.StartSpendingMoney(interactableGroundCanvas);
+        //}
         //public void StopSpending()
         //{
         //    StopCoroutine(_spendMoneyEnum);
